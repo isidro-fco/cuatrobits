@@ -35,6 +35,10 @@
 
   --duration: 180ms;
 
+  /* Cursores grandes y de colores, fáciles de ver para los niños (public/cursors) */
+  --cursor-default: url('/cursors/flecha.svg') 5 3, default;
+  --cursor-pointer: url('/cursors/mano.svg') 12 3, pointer;
+
   font-family: 'Inter Variable', system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
@@ -70,6 +74,7 @@ body {
   margin: 0;
   min-height: 100dvh;
   background: var(--bg);
+  cursor: var(--cursor-default);
 }
 
 h1,
@@ -85,8 +90,21 @@ input {
   color: inherit;
 }
 
-button {
-  cursor: pointer;
+button,
+a[href],
+label,
+select,
+summary,
+[role='button'],
+input[type='checkbox'],
+input[type='radio'] {
+  cursor: var(--cursor-pointer);
+}
+
+/* En los campos de texto se conserva la barra para escribir */
+input:not([type='checkbox'], [type='radio'], [type='range']),
+textarea {
+  cursor: text;
 }
 
 :focus-visible {

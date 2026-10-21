@@ -120,7 +120,7 @@
   background: rgb(255 255 255 / 0.2);
 }
 .c4__column:disabled {
-  cursor: default;
+  cursor: var(--cursor-default);
 }
 .c4__cell {
   display: grid;
@@ -315,7 +315,7 @@
   display: block;
   height: auto;
   padding: 0;
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
   transition:
     border-color var(--duration),
     transform var(--duration);
@@ -382,7 +382,7 @@
   perspective: 600px;
 }
 .memory-card:disabled {
-  cursor: default;
+  cursor: var(--cursor-default);
 }
 .memory-card__inner {
   position: relative;

@@ -200,7 +200,7 @@
 /* Transición breve al entrar a un juego (sección 3.2) */
 .islands--leaving .island:disabled {
   opacity: 0.35;
-  cursor: default;
+  cursor: var(--cursor-default);
 }
 .island--selected {
   animation: island-launch 450ms ease-in forwards;
@@ -552,7 +552,7 @@
   margin: 1.5rem 0 0.5rem;
   background: transparent;
   appearance: none;
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
 }
 .range::-webkit-slider-runnable-track {
   height: 0.8rem;
