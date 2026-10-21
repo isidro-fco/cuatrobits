@@ -1,6 +1,9 @@
 /* ===== Estructura de página ===== */
+/* El contenido ocupa el alto restante bajo el encabezado y queda centrado en él */
 .shell {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 100dvh;
   overflow-x: clip;
   padding: 1.5rem clamp(1rem, 4vw, 4rem) 3rem;
@@ -28,6 +31,11 @@
 .shell__main {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
   margin-inline: auto;
 }
 .shell__main--narrow {
