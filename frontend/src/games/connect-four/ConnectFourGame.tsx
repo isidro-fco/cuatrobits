@@ -80,7 +80,7 @@ export function ConnectFourGame({ config, paused, onFinish }: GameProps<ConnectF
             key={i}
             className="c4__player"
             data-active={status.kind === 'playing' && turn === i}
-            style={{ '--disc': colors[i].color } as CSSProperties}
+            style={{ '--disc': colors[i].color, '--disc-ink': colors[i].ink } as CSSProperties}
           >
             <span className="c4__disc c4__disc--small" aria-hidden>
               {DISC_SYMBOLS[i]}
@@ -119,7 +119,7 @@ export function ConnectFourGame({ config, paused, onFinish }: GameProps<ConnectF
                     {cell !== null && (
                       <span
                         className={`c4__disc ${isLast ? 'c4__disc--drop' : ''} ${winCells.has(`${row}-${col}`) ? 'c4__disc--win' : ''}`}
-                        style={{ '--disc': colors[cell].color, '--drop-rows': row + 1 } as CSSProperties}
+                        style={{ '--disc': colors[cell].color, '--disc-ink': colors[cell].ink, '--drop-rows': row + 1 } as CSSProperties}
                         aria-hidden
                       >
                         {DISC_SYMBOLS[cell]}

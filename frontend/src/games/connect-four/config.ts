@@ -27,26 +27,42 @@ export function connectFourPath(config: ConnectFourConfig): string {
     : `/juego/connect-four?modo=ia&dificultad=${config.difficulty}`
 }
 
-// Paleta de fichas (sección 5.3). Cada color lleva un símbolo para no depender solo del color.
+// Paleta de fichas (sección 5.3). Colores intensos que resaltan sobre los huecos claros del tablero;
+// cada ficha lleva además un símbolo para no depender solo del color.
 export interface DiscStyle {
   name: string
   color: string
+  /** Color del símbolo, elegido para que contraste con la ficha */
+  ink: string
 }
 
+const DARK_INK = '#14295c'
+const LIGHT_INK = '#ffffff'
+
 export const DISC_PALETTE: DiscStyle[] = [
-  { name: 'roja', color: '#ef5b5b' },
-  { name: 'amarilla', color: '#ffd35c' },
-  { name: 'verde', color: '#58d9ae' },
-  { name: 'lila', color: '#c4b0ff' },
-  { name: 'blanca', color: '#ffffff' },
+  { name: 'roja', color: '#e63946', ink: LIGHT_INK },
+  { name: 'amarilla', color: '#ffc61a', ink: DARK_INK },
+  { name: 'verde', color: '#16a34a', ink: LIGHT_INK },
+  { name: 'naranja', color: '#f97316', ink: DARK_INK },
+  { name: 'rosa', color: '#e83e8c', ink: LIGHT_INK },
+  { name: 'morada', color: '#7c3aed', ink: LIGHT_INK },
 ]
+
+/** Parejas que se parecen demasiado, sobre todo con daltonismo; nunca se asignan juntas */
+const SIMILAR_PAIRS = [
+  ['roja', 'rosa'],
+  ['roja', 'naranja'],
+  ['rosa', 'morada'],
+]
+
+export const areSimilar = (a: DiscStyle, b: DiscStyle) =>
+  SIMILAR_PAIRS.some(([x, y]) => (a.name === x && b.name === y) || (a.name === y && b.name === x))
 
 export const DISC_SYMBOLS = ['★', '●'] as const
 
-/** Elige dos colores distintos al azar */
+/** Elige dos colores distintos al azar que se distingan bien entre sí */
 export function pickDiscColors(random: () => number = Math.random): [DiscStyle, DiscStyle] {
-  const first = Math.floor(random() * DISC_PALETTE.length)
-  let second = Math.floor(random() * (DISC_PALETTE.length - 1))
-  if (second >= first) second++
-  return [DISC_PALETTE[first], DISC_PALETTE[second]]
+  const first = DISC_PALETTE[Math.floor(random() * DISC_PALETTE.length)]
+  const options = DISC_PALETTE.filter((d) => d !== first && !areSimilar(first, d))
+  return [first, options[Math.floor(random() * options.length)]]
 }

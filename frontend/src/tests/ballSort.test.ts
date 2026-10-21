@@ -1,7 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import { MAX_COLORS, MIN_COLORS, SPHERE_COLORS, SPHERE_SYMBOLS, SPHERES_PER_COLOR, tubeCount } from '../data/ballSort'
 import { parseBallSortConfig } from '../games/ball-sort/config'
-import { canMove, CAPACITY, generateLevel, isSolved, moveBall, solve, type Tubes } from '../games/ball-sort/logic'
+import {
+  canMove,
+  CAPACITY,
+  completedTubes,
+  generateLevel,
+  generateLevelWithSolution,
+  isSolved,
+  moveBall,
+  solve,
+  verifySolution,
+  type Tubes,
+} from '../games/ball-sort/logic'
 
 function seeded(seed: number) {
   return () => {
@@ -73,7 +84,7 @@ describe('generador de niveles (sección 7.4)', () => {
     it(`con ${colors} ${colors === 1 ? 'color' : 'colores'} crea niveles resolubles y no resueltos`, () => {
       const random = seeded(colors * 97)
       for (let i = 0; i < 5; i++) {
-        const level = generateLevel(colors, random)
+        const { tubes: level, solution } = generateLevelWithSolution(colors, random)
         // Número de tubos y esferas según la configuración
         expect(level).toHaveLength(tubeCount(colors))
         const balls = level.flat()
@@ -82,11 +93,12 @@ describe('generador de niveles (sección 7.4)', () => {
         expect(level.every((t) => t.length <= CAPACITY)).toBe(true)
         expect(isSolved(level)).toBe(false)
 
-        // La solución encontrada solo usa movimientos legales y termina en el estado resuelto
-        const solution = solve(level, 200_000)
-        expect(solution).not.toBeNull()
+        // Ningún tubo empieza completo
+        expect(completedTubes(level)).toBe(0)
+
+        // La solución que acompaña al nivel solo usa movimientos legales y termina en el estado resuelto
         let state = level
-        for (const [from, to] of solution!) {
+        for (const [from, to] of solution) {
           expect(canMove(state, from, to)).toBe(true)
           state = moveBall(state, from, to)
         }
@@ -94,6 +106,28 @@ describe('generador de niveles (sección 7.4)', () => {
       }
     })
   }
+
+  it('generateLevel entrega un nivel con solución', () => {
+    const level = generateLevel(6, seeded(5))
+    expect(solve(level, 200_000)).not.toBeNull()
+  })
+
+  it('verifySolution rechaza movimientos ilegales o que no terminan el nivel', () => {
+    const tubes: Tubes = [[0, 0, 0, 0, 1], [1, 1, 1, 1, 0], [], [], []]
+    expect(verifySolution(tubes, [[0, 2], [1, 3], [2, 1], [3, 0]])).toBe(true)
+    expect(verifySolution(tubes, [[0, 1]])).toBe(false)
+    expect(verifySolution(tubes, [[0, 2]])).toBe(false)
+  })
+
+  it('aunque el azar siempre devuelva lo mismo, el nivel tiene solución verificada', () => {
+    for (const value of [0, 0.42, 0.999]) {
+      for (let colors = MIN_COLORS; colors <= MAX_COLORS; colors++) {
+        const { tubes, solution } = generateLevelWithSolution(colors, () => value)
+        expect(isSolved(tubes)).toBe(false)
+        expect(verifySolution(tubes, solution)).toBe(true)
+      }
+    }
+  })
 
   it('el solucionador reconoce un nivel sin solución', () => {
     // Dos tubos llenos y mezclados sin espacio libre

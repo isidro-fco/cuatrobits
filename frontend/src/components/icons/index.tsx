@@ -32,6 +32,12 @@ export const Restart = () => (
     <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5" />
   </Icon>
 )
+export const Shuffle = () => (
+  <Icon>
+    <path d="M3 7h3c4.5 0 6.5 10 11 10h4M18 14l3 3-3 3" />
+    <path d="M3 17h3c1.7 0 3-1.4 4.2-3.3M13.8 10.3C15 8.4 16.3 7 18 7h3M18 4l3 3-3 3" />
+  </Icon>
+)
 export const Home = () => (
   <Icon>
     <path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z" />

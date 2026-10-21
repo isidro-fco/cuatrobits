@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { chooseAiMove, type AiDifficulty } from '../games/connect-four/ai'
-import { parseConnectFourConfig, pickDiscColors } from '../games/connect-four/config'
+import { areSimilar, DISC_PALETTE, parseConnectFourConfig, pickDiscColors } from '../games/connect-four/config'
 import {
   applyMove,
   boardFromRows,
@@ -140,6 +140,44 @@ describe('configuración de Conecta 4', () => {
     for (let i = 0; i < 50; i++) {
       const [a, b] = pickDiscColors(random)
       expect(a.color).not.toBe(b.color)
+      expect(areSimilar(a, b)).toBe(false)
+    }
+  })
+
+  // Contraste según WCAG: luminancia relativa de un color hexadecimal
+  const luminance = (hex: string) => {
+    const [r, g, b] = [1, 3, 5].map((i) => {
+      const c = parseInt(hex.slice(i, i + 2), 16) / 255
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  const contrast = (a: string, b: string) => {
+    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+    return (hi + 0.05) / (lo + 0.05)
+  }
+
+  // Intensidad del color: 0 en blancos y grises, 1 en colores puros
+  const chroma = (hex: string) => {
+    const channels = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    return Math.max(...channels) - Math.min(...channels)
+  }
+
+  it('todas las fichas son de colores intensos y su símbolo se lee', () => {
+    // La paleta anterior tenía blanco (0) y un lila pálido (0.31), que se confundían con los huecos
+    expect(chroma('#ffffff')).toBe(0)
+    expect(chroma('#c4b0ff')).toBeLessThan(0.5)
+    for (const disc of DISC_PALETTE) {
+      expect(chroma(disc.color), disc.name).toBeGreaterThanOrEqual(0.5)
+      expect(contrast(disc.color, disc.ink), disc.name).toBeGreaterThanOrEqual(3)
+    }
+  })
+
+  it('con cualquier primer color quedan opciones para el segundo', () => {
+    for (let i = 0; i < DISC_PALETTE.length; i++) {
+      const [a, b] = pickDiscColors(() => (i + 0.5) / DISC_PALETTE.length)
+      expect(a).toBe(DISC_PALETTE[i])
+      expect(b).toBeDefined()
     }
   })
 })

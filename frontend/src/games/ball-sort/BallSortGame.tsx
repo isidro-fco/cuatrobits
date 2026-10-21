@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { SPHERE_COLORS, SPHERE_NAMES, SPHERE_SYMBOLS } from '../../data/ballSort'
-import { Restart } from '../../components/icons'
+import { Restart, Shuffle } from '../../components/icons'
 import { playSfx } from '../../services/audio'
 import type { GameProps } from '../types'
 import type { BallSortConfig } from './config'
 import { canMove, CAPACITY, completedTubes, generateLevel, isSolved, moveBall, type Tubes } from './logic'
 
 export function BallSortGame({ config, onFinish }: GameProps<BallSortConfig>) {
-  const [initial] = useState(() => generateLevel(config.colors))
+  const [initial, setInitial] = useState(() => generateLevel(config.colors))
   const [tubes, setTubes] = useState<Tubes>(initial)
   const [history, setHistory] = useState<Tubes[]>([])
   const [selected, setSelected] = useState<number | null>(null)
@@ -70,11 +70,19 @@ export function BallSortGame({ config, onFinish }: GameProps<BallSortConfig>) {
     setLastTarget(null)
   }
 
-  function restartLevel() {
-    setTubes(initial)
+  function restartLevel(level: Tubes = initial) {
+    setTubes(level)
     setHistory([])
     setSelected(null)
     setLastTarget(null)
+  }
+
+  /** Otro nivel con los mismos colores, también con solución verificada */
+  function newLevel() {
+    const level = generateLevel(config.colors)
+    setInitial(level)
+    restartLevel(level)
+    playSfx('select')
   }
 
   return (
@@ -85,13 +93,19 @@ export function BallSortGame({ config, onFinish }: GameProps<BallSortConfig>) {
           Tubos completos: {completedTubes(tubes)} / {config.colors}
         </span>
         <span className="game-toolbar__spacer" />
-        <button type="button" className="btn btn--outline btn--small" onClick={undo} disabled={history.length === 0 || solved}>
-          ↶ Deshacer
-        </button>
-        <button type="button" className="btn btn--outline btn--small" onClick={restartLevel} disabled={solved}>
-          <Restart />
-          Reiniciar nivel
-        </button>
+        <div className="ball-sort__actions">
+          <button type="button" className="btn btn--outline btn--small" onClick={undo} disabled={history.length === 0 || solved}>
+            ↶ Deshacer
+          </button>
+          <button type="button" className="btn btn--outline btn--small" onClick={() => restartLevel()} disabled={solved}>
+            <Restart />
+            Reiniciar nivel
+          </button>
+          <button type="button" className="btn btn--outline btn--small" onClick={newLevel} disabled={solved}>
+            <Shuffle />
+            Nuevas esferas
+          </button>
+        </div>
       </div>
 
       <p className="game-status" role="status">

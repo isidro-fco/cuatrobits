@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { CONTENT } from '../data/content'
-import { generateLevel, solve } from '../games/ball-sort/logic'
+import { generateLevelWithSolution } from '../games/ball-sort/logic'
 import { createDeck } from '../games/memory/logic'
 import { routes } from '../routes'
 import { useHistoryStore } from '../stores/historyStore'
@@ -104,8 +104,7 @@ describe('partida completa', () => {
 
   it('Ordenamiento de esferas: deshacer y completar el nivel', async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.42)
-    const level = generateLevel(3, () => 0.42)
-    const solution = solve(level)!
+    const { solution } = generateLevelWithSolution(3, () => 0.42)
     const user = userEvent.setup()
     renderAt('/juego/ball-sort?colores=3')
     const tube = (i: number) => screen.getByRole('button', { name: new RegExp(`^Tubo ${i + 1}:`) })
@@ -128,6 +127,33 @@ describe('partida completa', () => {
       xpEarned: 25,
       details: { colors: 3, moves: solution.length, completed: true },
     })
+  })
+
+  it('Ordenamiento de esferas: «Nuevas esferas» cambia el nivel y reinicia los movimientos', async () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.42)
+    const first = generateLevelWithSolution(4, () => 0.42)
+    const second = generateLevelWithSolution(4, () => 0.77)
+    const user = userEvent.setup()
+    renderAt('/juego/ball-sort?colores=4')
+    const labels = () => screen.getAllByRole('button', { name: /^Tubo \d+:/ }).map((b) => b.getAttribute('aria-label'))
+    await screen.findByText('Movimientos: 0')
+    const before = labels()
+
+    const [from, to] = first.solution[0]
+    await user.click(screen.getByRole('button', { name: new RegExp(`^Tubo ${from + 1}:`) }))
+    await user.click(screen.getByRole('button', { name: new RegExp(`^Tubo ${to + 1}:`) }))
+    expect(screen.getByText('Movimientos: 1')).toBeInTheDocument()
+
+    random.mockReturnValue(0.77)
+    await user.click(screen.getByRole('button', { name: /Nuevas esferas/ }))
+    expect(screen.getByText('Movimientos: 0')).toBeInTheDocument()
+    expect(labels()).not.toEqual(before)
+    // El nuevo nivel también se puede terminar con su solución verificada
+    for (const [a, b] of second.solution) {
+      await user.click(screen.getByRole('button', { name: new RegExp(`^Tubo ${a + 1}:`) }))
+      await user.click(screen.getByRole('button', { name: new RegExp(`^Tubo ${b + 1}:`) }))
+    }
+    expect(await screen.findByRole('alert')).toHaveTextContent('¡Todas las esferas están ordenadas!')
   })
 
   it('Memorama: encontrar todas las parejas', async () => {

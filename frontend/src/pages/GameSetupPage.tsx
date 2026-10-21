@@ -3,12 +3,12 @@ import { Navigate, useNavigate, useParams } from 'react-router'
 import { BackButton } from '../components/BackButton'
 import { ArrowRight, Check } from '../components/icons'
 import { PageShell } from '../components/PageShell'
-import { PixelSprite } from '../components/PixelSprite'
 import { BITBOT_DIFFICULTIES, CATEGORIES, MEMORY_DIFFICULTIES } from '../data/categories'
-import { useBitBotSprite } from '../hooks/useBitBotSprite'
 import type { CategoryId } from '../types'
 
 type SetupGame = 'bitbot' | 'memory'
+
+const GAME_NAMES: Record<SetupGame, string> = { bitbot: 'Arma a BitBot', memory: 'Memorama' }
 
 function isSetupGame(value: string | undefined): value is SetupGame {
   return value === 'bitbot' || value === 'memory'
@@ -23,8 +23,7 @@ export function GameSetupPage() {
 
 function GameSetup({ game }: { game: SetupGame }) {
   const navigate = useNavigate()
-  const bitbot = useBitBotSprite()
-  const difficulties =game === 'bitbot' ? BITBOT_DIFFICULTIES : MEMORY_DIFFICULTIES
+  const difficulties = game === 'bitbot' ? BITBOT_DIFFICULTIES : MEMORY_DIFFICULTIES
   const [difficulty, setDifficulty] = useState<string>(difficulties[0].id)
   const [category, setCategory] = useState<CategoryId | null>(null)
 
@@ -112,45 +111,11 @@ function GameSetup({ game }: { game: SetupGame }) {
   return (
     <PageShell actions={<BackButton />} width="medium">
       <div className="page-title">
-        <h1>¡Preparemos tu partida!</h1>
+        <h1>¡Preparemos {GAME_NAMES[game]}!</h1>
         <p>Escoge una categoría y elige tu desafío</p>
       </div>
 
       <div className="card setup">
-        <div className="game-tabs" role="tablist" aria-label="Juego">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={game === 'bitbot'}
-            className="choice game-tab"
-            onClick={() => navigate('/preparar/bitbot', { replace: true })}
-          >
-            <PixelSprite sprite={bitbot} size={48} />
-            <span>
-              Arma a BitBot
-              <span className="choice__sub">Construye y descubre palabras</span>
-            </span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={game === 'memory'}
-            className="choice game-tab"
-            onClick={() => navigate('/preparar/memory', { replace: true })}
-          >
-            <span className="memory-icon" aria-hidden>
-              <i />
-              <i />
-              <i />
-              <i />
-            </span>
-            <span>
-              Memorama
-              <span className="choice__sub">Encuentra todas las parejas</span>
-            </span>
-          </button>
-        </div>
-
         {game === 'bitbot' ? (
           <>
             {difficultyStep}

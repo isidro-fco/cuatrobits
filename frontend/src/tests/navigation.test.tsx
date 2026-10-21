@@ -81,6 +81,16 @@ describe('navegación entre pantallas', () => {
     expect(router.state.location.pathname).toBe('/')
   })
 
+  it.each([
+    ['/preparar/bitbot', 'Arma a BitBot', 'Memorama'],
+    ['/preparar/memory', 'Memorama', 'Arma a BitBot'],
+  ])('%s muestra solo el juego elegido, sin opciones para cambiarlo', async (path, game, other) => {
+    renderAt(path)
+    expect(await screen.findByRole('heading', { name: `¡Preparemos ${game}!` })).toBeInTheDocument()
+    expect(screen.queryByText(other)).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument()
+  })
+
   it('en BitBot solo se pueden elegir las categorías de la dificultad elegida', async () => {
     const user = userEvent.setup()
     const router = renderAt('/preparar/bitbot')
