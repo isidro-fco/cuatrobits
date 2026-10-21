@@ -1,0 +1,14 @@
+{
+  "name": "cuatrobits",
+  "private": true,
+  "packageManager": "pnpm@12.4.1",
+  "scripts": {
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

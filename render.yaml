@@ -1,0 +1,27 @@
+# Blueprint de Render para el backend (ver DESPLIEGUE.md)
+services:
+  - type: web
+    name: cuatrobits-api
+    runtime: node
+    plan: free
+    rootDir: .
+    # corepack usa la versión de pnpm de package.json (packageManager)
+    buildCommand: corepack pnpm install --frozen-lockfile && corepack pnpm --filter backend build
+    # Aplica las migraciones pendientes antes de arrancar; si ya está al día no hace nada
+    startCommand: node backend/dist/migrate.js && node backend/dist/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: COREPACK_ENABLE_DOWNLOAD_PROMPT
+        value: "0"
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: verify
+      - key: DATABASE_CA_CERT
+        sync: false
+      - key: DATABASE_POOL_MAX
+        value: "5"
+      - key: CORS_ORIGIN
+        sync: false
