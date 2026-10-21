@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { IDLE_MS } from '../components/IdleScreen'
+import { IDLE_MS, LEAVE_MS } from '../components/IdleScreen'
 import { routes } from '../routes'
 import { usePlayerStore } from '../stores/playerStore'
 
@@ -43,7 +43,11 @@ describe('protector de pantalla por inactividad', () => {
     renderAt('/')
     wait(IDLE_MS)
     fireEvent.keyDown(idleScreen(), { key: 'a' })
+    expect(idleScreen()).toHaveClass('idle-screen--leaving')
+    expect(idleScreen().open).toBe(true)
+    wait(LEAVE_MS)
     expect(idleScreen().open).toBe(false)
+    expect(idleScreen()).not.toHaveClass('idle-screen--leaving')
 
     wait(IDLE_MS - 1000)
     fireEvent.pointerDown(document.body)
@@ -52,6 +56,7 @@ describe('protector de pantalla por inactividad', () => {
     wait(1000)
     expect(idleScreen().open).toBe(true)
     fireEvent.pointerDown(idleScreen())
+    wait(LEAVE_MS)
     expect(idleScreen().open).toBe(false)
   })
 
@@ -62,6 +67,7 @@ describe('protector de pantalla por inactividad', () => {
     fireEvent.pointerMove(idleScreen(), { clientX: 104, clientY: 103 })
     expect(idleScreen().open).toBe(true)
     fireEvent.pointerMove(idleScreen(), { clientX: 160, clientY: 100 })
+    wait(LEAVE_MS)
     expect(idleScreen().open).toBe(false)
   })
 
