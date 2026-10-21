@@ -3,8 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { ACHIEVEMENTS } from '../data/achievements'
-import { bitbotSprite, COSMETICS, DEFAULT_BITBOT, FREE_ITEMS } from '../data/cosmetics'
-import { BITBOT_SPRITE } from '../data/sprites'
+import { AVATARS } from '../data/avatars'
+import { avatarSprite, bitbotSprite, COSMETICS, DEFAULT_BITBOT, FREE_ITEMS } from '../data/cosmetics'
+import { AVATAR_SPRITES, BITBOT_SPRITE } from '../data/sprites'
 import { routes } from '../routes'
 import { playSfx } from '../services/audio'
 import { syncPendingGames } from '../services/syncService'
@@ -135,6 +136,22 @@ describe('artículos de BitBot (sección 9.4)', () => {
     expect(bitbotSprite({ ...DEFAULT_BITBOT, color: 'color-mint' }).palette.b).toBe('#2bb59a')
   })
 
+  it('el avatar del jugador lleva los mismos artículos que BitBot', () => {
+    for (const { id } of AVATARS) {
+      const base = AVATAR_SPRITES[id]
+      expect(avatarSprite(id, DEFAULT_BITBOT)).toEqual(base)
+      for (const item of COSMETICS.filter((c) => c.kind === 'accessory' && c.overlay)) {
+        const sprite = avatarSprite(id, { ...DEFAULT_BITBOT, accessory: item.id })
+        expect(sprite.half, `${id} + ${item.id}`).not.toEqual(base.half)
+        expect(sprite.half).toHaveLength(base.half.length)
+        for (const row of sprite.half) for (const char of row) if (char !== '.') expect(sprite.palette[char]).toBeDefined()
+        // Los colores del accesorio no cambian los del avatar
+        for (const [key, color] of Object.entries(base.palette)) expect(sprite.palette[key], `${id} + ${item.id}: ${key}`).toBe(color)
+      }
+    }
+    expect(avatarSprite('dino', { color: 'color-orange', accessory: 'accessory-crown' }).palette.g).toBe('#ff8c42')
+  })
+
   it('no se puede comprar sin Bits suficientes ni dos veces', () => {
     const { buyItem, addRewards } = usePlayerStore.getState()
     expect(buyItem(player().id, 'color-mint')).toBe(false)
@@ -151,7 +168,7 @@ describe('artículos de BitBot (sección 9.4)', () => {
     expect(player().bitbot.accessory).toBe('accessory-none')
   })
 
-  it('en el taller se compra un artículo y BitBot lo usa', async () => {
+  it('en el taller se compra un artículo y el avatar del jugador lo usa', async () => {
     usePlayerStore.getState().addRewards(player().id, { xp: 0, bits: 45 })
     const user = userEvent.setup()
     renderAt('/taller')
@@ -161,6 +178,8 @@ describe('artículos de BitBot (sección 9.4)', () => {
     await user.click(screen.getByRole('button', { name: 'Comprar Gorro por 40 Bits' }))
     expect(screen.getByRole('status')).toHaveTextContent('¡Compraste Gorro!')
     expect(player()).toMatchObject({ bits: 5, bitbot: { accessory: 'accessory-cap' } })
+    // La vista grande es el avatar del jugador con el gorro rojo puesto
+    expect(screen.getByRole('img', { name: 'Gato naranja' }).querySelector('rect[fill="#e5484d"]')).not.toBeNull()
 
     // Volver al accesorio anterior no cuesta nada
     await user.click(screen.getAllByRole('button', { name: 'Usar' })[0])

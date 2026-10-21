@@ -1,7 +1,10 @@
 import '@testing-library/jest-dom/vitest'
-import { cleanup } from '@testing-library/react'
+import { cleanup, configure } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { fakeApi, fakeFetch } from './fakeApi'
+
+// findBy* espera 1 s por defecto; con el backend probándose en paralelo la página puede tardar más
+configure({ asyncUtilTimeout: 5_000 })
 
 afterEach(cleanup)
 

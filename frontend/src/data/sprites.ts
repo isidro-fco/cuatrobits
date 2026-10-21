@@ -115,3 +115,18 @@ export const AVATAR_SPRITES: Record<AvatarId, SpriteDefinition> = {
     palette: { y: '#ffd35c', o: '#e0a800', w: WHITE, k: NAVY },
   },
 }
+
+export type AccessoryAnchor = 'top' | 'eyes' | 'neck'
+
+/**
+ * Cómo se visten los avatares con los artículos del Taller: `body` es la letra de la paleta que
+ * cambia con los colores y cada anclaje dice cuántas filas se mueven los accesorios respecto a BitBot.
+ */
+export const AVATAR_FIT: Record<AvatarId, { body: string } & Record<AccessoryAnchor, number>> = {
+  robot: { body: 'b', top: 0, eyes: 0, neck: 0 },
+  cat: { body: 'o', top: 1, eyes: 1, neck: 0 },
+  dino: { body: 'g', top: 0, eyes: 0, neck: 0 },
+  fox: { body: 'f', top: 1, eyes: 1, neck: -1 },
+  astronaut: { body: 's', top: 0, eyes: 0, neck: 0 },
+  monster: { body: 'y', top: 0, eyes: 0, neck: -1 },
+}

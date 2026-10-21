@@ -23,7 +23,7 @@ export function ProfilePage() {
   return (
     <PageShell actions={<BackButton />}>
       <section className="card profile-card" aria-labelledby="profile-name">
-        <Avatar id={player.avatar} size={150} />
+        <Avatar id={player.avatar} look={player.bitbot} size={150} />
         <div className="profile-card__main">
           <span className="eyebrow">Tu perfil</span>
           <h1 id="profile-name">{player.username}</h1>

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Navigate, Outlet, useSearchParams } from 'react-router'
 import { useAutoSync } from '../hooks/useAutoSync'
 import { RegisterPage } from '../pages/RegisterPage'
+import { IdleScreen } from './IdleScreen'
 import { checkAchievements } from '../services/achievementService'
 import { installAudioUnlock, setMusicEnabled } from '../services/audio'
 import { useActivePlayer, usePlayerStore } from '../stores/playerStore'
@@ -26,7 +27,12 @@ export function Root() {
     if (activeId) checkAchievements(activeId)
   }, [activeId])
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      <IdleScreen />
+    </>
+  )
 }
 
 /** Las pantallas del juego requieren un perfil activo */

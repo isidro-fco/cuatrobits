@@ -1,7 +1,8 @@
 // Fondo abstracto: manchas de color y mosaicos de píxeles en los márgenes (prototipo A7).
-export function Background() {
+// `animated` hace que las figuras se muevan (protector de pantalla).
+export function Background({ animated = false }: { animated?: boolean }) {
   return (
-    <div className="background" aria-hidden>
+    <div className={animated ? 'background background--animated' : 'background'} aria-hidden>
       <span className="blob blob--blue" />
       <span className="blob blob--lilac" />
       <span className="blob blob--mint" />

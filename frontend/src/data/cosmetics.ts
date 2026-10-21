@@ -1,8 +1,14 @@
 // Artículos de BitBot que se compran con Bits (sección 9.4). Solo cambian su apariencia.
 // Los precios deben coincidir con backend/src/models/cosmetics.ts; una prueba lo comprueba.
-import { BITBOT_SPRITE, type SpriteDefinition } from './sprites'
+import type { AvatarId } from '../types'
+import { AVATAR_FIT, AVATAR_SPRITES, BITBOT_SPRITE, type AccessoryAnchor, type SpriteDefinition } from './sprites'
 
 export type CosmeticKind = 'color' | 'accessory'
+
+export interface BitBotLook {
+  color: string
+  accessory: string
+}
 
 export interface CosmeticItem {
   id: string
@@ -13,6 +19,8 @@ export interface CosmeticItem {
   color?: string
   /** Filas que reemplazan las del sprite (mitad izquierda); `.` conserva el píxel original */
   overlay?: Record<number, string>
+  /** Parte del cuerpo donde va el accesorio; las filas de `overlay` están medidas sobre BitBot */
+  anchor?: AccessoryAnchor
   palette?: Record<string, string>
 }
 
@@ -28,6 +36,7 @@ export const COSMETICS: CosmeticItem[] = [
     id: 'accessory-bow',
     kind: 'accessory',
     name: 'Moño',
+    anchor: 'neck',
     price: 30,
     overlay: { 10: '...ppq' },
     palette: { p: '#f07cb2', q: '#c2457f' },
@@ -36,6 +45,7 @@ export const COSMETICS: CosmeticItem[] = [
     id: 'accessory-cap',
     kind: 'accessory',
     name: 'Gorro',
+    anchor: 'top',
     price: 40,
     overlay: { 0: '...rrr', 1: '..rrrr', 2: 'RRRRRR' },
     palette: { r: '#e5484d', R: '#14295c' },
@@ -44,6 +54,7 @@ export const COSMETICS: CosmeticItem[] = [
     id: 'accessory-glasses',
     kind: 'accessory',
     name: 'Lentes de sol',
+    anchor: 'eyes',
     price: 50,
     overlay: { 4: '..kckk', 5: '..kkkw' },
     palette: { k: '#14295c', c: '#8fd3ff', w: '#ffffff' },
@@ -52,6 +63,7 @@ export const COSMETICS: CosmeticItem[] = [
     id: 'accessory-headphones',
     kind: 'accessory',
     name: 'Audífonos',
+    anchor: 'top',
     price: 60,
     overlay: { 1: '.kkkkk', 2: 'k.....', 3: 'k.....', 4: 'h.....', 5: 'h.....', 6: 'h.....' },
     palette: { k: '#14295c', h: '#ff8c42' },
@@ -60,6 +72,7 @@ export const COSMETICS: CosmeticItem[] = [
     id: 'accessory-crown',
     kind: 'accessory',
     name: 'Corona',
+    anchor: 'top',
     price: 100,
     overlay: { 0: '.y.y.y', 1: '.yyyyg' },
     palette: { y: '#ffc21a', g: '#e5484d' },
@@ -79,16 +92,30 @@ export function bitbotBodyColor(colorId: string): string {
   return findCosmetic(colorId)?.color ?? BITBOT_SPRITE.palette.b
 }
 
-/** Sprite de BitBot con el color y el accesorio elegidos */
-export function bitbotSprite(look: { color: string; accessory: string }): SpriteDefinition {
+/** Sprite con el color y el accesorio elegidos puestos sobre `base` */
+function dress(base: SpriteDefinition, avatar: AvatarId, look: BitBotLook): SpriteDefinition {
+  const fit = AVATAR_FIT[avatar]
   const accessory = findCosmetic(look.accessory)
-  const half = BITBOT_SPRITE.half.map((row, y) => {
-    const overlay = accessory?.overlay?.[y]
+  const shift = accessory?.anchor ? fit[accessory.anchor] : 0
+  // Los colores del accesorio usan dígitos para no pisar las letras de la paleta del avatar
+  const keys = Object.keys(accessory?.palette ?? {})
+  const half = base.half.map((row, y) => {
+    const overlay = accessory?.overlay?.[y - shift]
     if (!overlay) return row
-    return [...row].map((char, x) => (overlay[x] === '.' ? char : overlay[x])).join('')
+    return [...row].map((char, x) => (overlay[x] === '.' ? char : String(keys.indexOf(overlay[x])))).join('')
   })
-  return {
-    half,
-    palette: { ...BITBOT_SPRITE.palette, b: bitbotBodyColor(look.color), ...accessory?.palette },
-  }
+  const accessoryPalette = Object.fromEntries(keys.map((key, i) => [String(i), accessory!.palette![key]]))
+  // El color gratuito deja a cada avatar con su color original
+  const body = look.color === DEFAULT_BITBOT.color ? {} : { [fit.body]: bitbotBodyColor(look.color) }
+  return { half, palette: { ...base.palette, ...body, ...accessoryPalette } }
+}
+
+/** Sprite de BitBot con el color y el accesorio elegidos */
+export function bitbotSprite(look: BitBotLook): SpriteDefinition {
+  return dress(BITBOT_SPRITE, 'robot', look)
+}
+
+/** Avatar del jugador con los mismos artículos que lleva su BitBot */
+export function avatarSprite(avatar: AvatarId, look: BitBotLook): SpriteDefinition {
+  return dress(AVATAR_SPRITES[avatar], avatar, look)
 }

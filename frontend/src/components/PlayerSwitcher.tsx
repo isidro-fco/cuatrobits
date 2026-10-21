@@ -24,7 +24,7 @@ export function PlayerSwitcher({ onDone }: { onDone: () => void }) {
                 onDone()
               }}
             >
-              <Avatar id={p.avatar} size={52} />
+              <Avatar id={p.avatar} look={p.bitbot} size={52} />
               <span>
                 {p.username}
                 <span className="choice__sub">Nivel {levelFromXp(p.xp).level}</span>

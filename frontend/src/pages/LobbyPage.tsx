@@ -23,7 +23,7 @@ function PlayerBadge({ player }: { player: Player }) {
   const { level, current, required } = levelFromXp(player.xp)
   return (
     <div className="player-badge card">
-      <Avatar id={player.avatar} size={52} />
+      <Avatar id={player.avatar} look={player.bitbot} size={52} />
       <div className="player-badge__info">
         <strong>{player.username}</strong>
         <span>

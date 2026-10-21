@@ -3,7 +3,8 @@ import { BackButton } from '../components/BackButton'
 import { Check } from '../components/icons'
 import { PageShell } from '../components/PageShell'
 import { PixelSprite } from '../components/PixelSprite'
-import { bitbotSprite, COSMETICS, type CosmeticItem, type CosmeticKind } from '../data/cosmetics'
+import { getAvatar } from '../data/avatars'
+import { avatarSprite, COSMETICS, type CosmeticItem, type CosmeticKind } from '../data/cosmetics'
 import { playSfx } from '../services/audio'
 import { useActivePlayer, usePlayerStore } from '../stores/playerStore'
 import type { Player } from '../types'
@@ -19,8 +20,8 @@ function ItemCard({ item, player, onBuy }: { item: CosmeticItem; player: Player;
   const owned = player.items.includes(item.id)
   const equipped = player.bitbot[item.kind] === item.id
   const missing = item.price - player.bits
-  // Vista previa: la apariencia actual con este artículo puesto
-  const preview = bitbotSprite({ ...player.bitbot, [item.kind]: item.id })
+  // Vista previa: el avatar del jugador con su apariencia actual y este artículo puesto
+  const preview = avatarSprite(player.avatar, { ...player.bitbot, [item.kind]: item.id })
 
   let action
   if (equipped) {
@@ -81,20 +82,20 @@ export function WorkshopPage() {
     if (!buyItem(player.id, item.id)) return
     equipItem(player.id, item.id)
     playSfx('buy')
-    setMessage(`¡Compraste ${item.name}! BitBot ya lo está usando.`)
+    setMessage(`¡Compraste ${item.name}! Tu avatar ya lo está usando.`)
   }
 
   return (
     <PageShell actions={<BackButton />}>
       <div className="page-title">
         <h1>Taller de BitBot</h1>
-        <p>Usa tus Bits para cambiar el estilo de BitBot. ¡Solo cambia su apariencia, no da ventajas en los juegos!</p>
+        <p>Usa tus Bits para cambiar el estilo de tu avatar. ¡Solo cambia su apariencia, no da ventajas en los juegos!</p>
       </div>
 
       <div className="workshop">
-        <section className="card workshop__preview" aria-label="Tu BitBot">
-          <span className="workshop__bitbot">
-            <PixelSprite sprite={bitbotSprite(player.bitbot)} size="100%" title="Tu BitBot" />
+        <section className="card workshop__preview" aria-label="Tu avatar">
+          <span className="workshop__bitbot" style={{ background: getAvatar(player.avatar).background }}>
+            <PixelSprite sprite={avatarSprite(player.avatar, player.bitbot)} size="100%" title={getAvatar(player.avatar).name} />
           </span>
           <div className="bits-badge" aria-label={`Tienes ${player.bits} Bits`}>
             <span className="bits-badge__coin" aria-hidden>
