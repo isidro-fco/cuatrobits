@@ -19,22 +19,19 @@ import {
   MAX_ERRORS,
   maskedWord,
   normalizeLetter,
-  pickRandom,
+  pickWord,
+  recentWordsToAvoid,
   wrongLetters,
 } from './logic'
-
-// La última palabra se recuerda para no repetirla al reiniciar
-let lastWord: string | undefined
+import { getRecent, rememberRecent } from '../../utils/recent'
 
 export function BitBotGame({ config, paused, onFinish }: GameProps<BitBotConfig>) {
   const [entry] = useState(() => {
+    // Las palabras de las últimas partidas se evitan para que no se repitan tan seguido
     const words = CONTENT[config.category].words
-    const chosen = pickRandom(
-      words,
-      Math.random,
-      words.find((w) => w.word === lastWord),
-    )
-    lastWord = chosen.word
+    const list = `bitbot:${config.category}`
+    const chosen = pickWord(words, getRecent(list))
+    rememberRecent(list, [chosen.word], recentWordsToAvoid(words.length))
     return chosen
   })
   const [state, setState] = useState(() => createBitBotGame(entry.word))

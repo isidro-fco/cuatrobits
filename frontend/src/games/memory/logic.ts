@@ -27,10 +27,22 @@ function shuffle<T>(items: T[], random: () => number): T[] {
   return result
 }
 
-/** Selecciona las imágenes, duplica cada una y mezcla las cartas */
-export function createDeck(images: ImageEntry[], pairs: number, random: () => number = Math.random): MemoryCard[] {
+/**
+ * Selecciona las imágenes, duplica cada una y mezcla las cartas. Usa primero las que no están en
+ * `recent` (emojis de las últimas partidas, del más nuevo al más viejo) y, si faltan, las más viejas.
+ */
+export function createDeck(
+  images: ImageEntry[],
+  pairs: number,
+  random: () => number = Math.random,
+  recent: string[] = [],
+): MemoryCard[] {
   if (images.length < pairs) throw new Error(`Se necesitan ${pairs} imágenes y solo hay ${images.length}`)
-  const chosen = shuffle(images, random).slice(0, pairs)
+  const fresh = images.filter((image) => !recent.includes(image.emoji))
+  const stale = images
+    .filter((image) => recent.includes(image.emoji))
+    .sort((a, b) => recent.indexOf(b.emoji) - recent.indexOf(a.emoji))
+  const chosen = [...shuffle(fresh, random), ...stale].slice(0, pairs)
   const cards = chosen.flatMap((image, pairId) => [
     { pairId, image },
     { pairId, image },

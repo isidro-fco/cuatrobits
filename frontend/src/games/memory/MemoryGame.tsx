@@ -16,6 +16,7 @@ import {
   isMemoryComplete,
   pairCount,
 } from './logic'
+import { getRecent, rememberRecent } from '../../utils/recent'
 
 const HIDE_DELAY_MS = 1000
 
@@ -33,9 +34,19 @@ function useBestAttempts(difficulty: string): number | null {
 export function MemoryGame({ config, onFinish }: GameProps<MemoryConfig>) {
   const difficulty = MEMORY_DIFFICULTIES.find((d) => d.id === config.difficulty)!
   const category = CATEGORIES.find((c) => c.id === config.category)!
-  const [state, setState] = useState(() =>
-    createMemoryGame(createDeck(CONTENT[config.category].images, (difficulty.cols * difficulty.rows) / 2)),
-  )
+  const [state, setState] = useState(() => {
+    // Las imágenes de las últimas partidas se dejan al final para que no se repitan tan seguido
+    const images = CONTENT[config.category].images
+    const pairs = (difficulty.cols * difficulty.rows) / 2
+    const list = `memory:${config.category}`
+    const cards = createDeck(images, pairs, Math.random, getRecent(list))
+    rememberRecent(
+      list,
+      cards.map((card) => card.image.emoji),
+      images.length - pairs,
+    )
+    return createMemoryGame(cards)
+  })
   const best = useBestAttempts(config.difficulty)
   const pairs = pairCount(state)
   const complete = isMemoryComplete(state)

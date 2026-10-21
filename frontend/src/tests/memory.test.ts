@@ -38,6 +38,20 @@ describe('mazo de Memorama (sección 16.5)', () => {
     expect(new Set(groups.map(([a]) => cards[a].image.emoji)).size).toBe(pairs)
   })
 
+  it('usa primero las imágenes que no salieron en las últimas partidas', () => {
+    const first = createDeck(images, 8)
+    const used = [...new Set(first.map((c) => c.image.emoji))]
+    const next = createDeck(images, 8, Math.random, used)
+    expect(next.some((c) => used.includes(c.image.emoji))).toBe(false)
+
+    // En Experto no alcanzan las nuevas: se completan con las que salieron hace más tiempo
+    const recent = images.map((i) => i.emoji).slice(0, images.length - 4)
+    const expert = new Set(createDeck(images, 18, Math.random, recent).map((c) => c.image.emoji))
+    for (const emoji of images.map((i) => i.emoji).slice(images.length - 4)) expect(expert).toContain(emoji)
+    for (const emoji of recent.slice(-14)) expect(expert).toContain(emoji)
+    expect(expert.has(recent[0])).toBe(false)
+  })
+
   it('todas las categorías tienen imágenes suficientes para Experto', () => {
     for (const category of CATEGORIES) {
       const list = CONTENT[category.id].images

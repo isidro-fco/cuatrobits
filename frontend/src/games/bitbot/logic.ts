@@ -89,8 +89,12 @@ export function assembledPieces(state: BitBotState): number {
   return Math.min(TOTAL_PIECES - 1, INITIAL_PIECES + Math.floor(((TOTAL_PIECES - INITIAL_PIECES) * found) / total))
 }
 
-/** Elige un elemento al azar, evitando `exclude` cuando hay alternativas */
-export function pickRandom<T>(items: T[], random: () => number = Math.random, exclude?: T): T {
-  const pool = items.length > 1 && exclude !== undefined ? items.filter((i) => i !== exclude) : items
+/** Elige una palabra al azar entre las que no salieron hace poco; si ya salieron todas, entre cualquiera */
+export function pickWord<T extends { word: string }>(words: T[], recent: string[], random: () => number = Math.random): T {
+  const fresh = words.filter((w) => !recent.includes(w.word))
+  const pool = fresh.length > 0 ? fresh : words
   return pool[Math.floor(random() * pool.length)]
 }
+
+/** Cuántas palabras recientes se evitan: la mitad de la categoría */
+export const recentWordsToAvoid = (total: number) => Math.floor(total / 2)

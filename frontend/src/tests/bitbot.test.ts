@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { CATEGORIES } from '../data/categories'
 import { CONTENT } from '../data/content'
 import { parseBitBotConfig } from '../games/bitbot/config'
+import { getRecent, rememberRecent } from '../utils/recent'
 import {
   assembledPieces,
   attemptsLeft,
@@ -13,6 +14,8 @@ import {
   MAX_ERRORS,
   maskedWord,
   normalizeLetter,
+  pickWord,
+  recentWordsToAvoid,
   TOTAL_PIECES,
   wrongLetters,
 } from '../games/bitbot/logic'
@@ -119,5 +122,33 @@ describe('catálogo de palabras', () => {
     expect(parseBitBotConfig(new URLSearchParams('categoria=space&dificultad=easy'))).toBeNull()
     expect(parseBitBotConfig(new URLSearchParams('categoria=nada&dificultad=easy'))).toBeNull()
     expect(CATEGORIES.every((c) => CONTENT[c.id])).toBe(true)
+  })
+})
+
+describe('variedad de palabras', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('no repite una palabra hasta que sale la mitad de la categoría', () => {
+    const words = CONTENT.animals.words
+    const keep = recentWordsToAvoid(words.length)
+    const seen: string[] = []
+    for (let i = 0; i < 60; i++) {
+      const { word } = pickWord(words, getRecent('bitbot:animals'))
+      expect(seen.slice(-keep), `partida ${i}`).not.toContain(word)
+      seen.push(word)
+      rememberRecent('bitbot:animals', [word], keep)
+    }
+  })
+
+  it('si todas son recientes, elige cualquiera', () => {
+    const words = CONTENT.colors.words.slice(0, 2)
+    expect(words).toContainEqual(pickWord(words, words.map((w) => w.word)))
+  })
+
+  it('cada categoría tiene al menos 20 palabras distintas', () => {
+    for (const { words } of Object.values(CONTENT)) {
+      expect(words.length).toBeGreaterThanOrEqual(20)
+      expect(new Set(words.map((w) => w.word)).size).toBe(words.length)
+    }
   })
 })

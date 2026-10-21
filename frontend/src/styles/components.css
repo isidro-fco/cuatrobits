@@ -208,18 +208,64 @@
 .background--animated .pixels {
   display: grid;
 }
+/* Cada burbuja se desplaza (transform) y a la vez se deforma (scale y border-radius) con su propio
+   ritmo: se estira a lo ancho, luego a lo alto, y sus bordes cambian de forma */
 .background--animated .blob--blue {
   opacity: 0.95;
-  animation: idle-drift-a 14s ease-in-out infinite alternate;
+  animation:
+    idle-drift-a 14s ease-in-out infinite alternate,
+    idle-morph-a 5.2s ease-in-out infinite alternate;
 }
 .background--animated .blob--lilac {
-  animation: idle-drift-b 11s ease-in-out infinite alternate;
+  animation:
+    idle-drift-b 11s ease-in-out infinite alternate,
+    idle-morph-b 3.8s ease-in-out infinite alternate;
 }
 .background--animated .blob--mint {
-  animation: idle-drift-c 16s ease-in-out infinite alternate;
+  animation:
+    idle-drift-c 16s ease-in-out infinite alternate,
+    idle-morph-b 6.1s ease-in-out infinite alternate-reverse;
 }
 .background--animated .blob--yellow {
-  animation: idle-drift-d 12s ease-in-out infinite alternate;
+  animation:
+    idle-drift-d 12s ease-in-out infinite alternate,
+    idle-morph-a 4.5s ease-in-out -2s infinite alternate-reverse;
+}
+@keyframes idle-morph-a {
+  0% {
+    scale: 1 1;
+    border-radius: 50%;
+  }
+  30% {
+    scale: 1.3 0.75;
+    border-radius: 62% 38% 55% 45% / 42% 58% 40% 60%;
+  }
+  65% {
+    scale: 0.8 1.25;
+    border-radius: 40% 60% 42% 58% / 62% 38% 60% 40%;
+  }
+  100% {
+    scale: 1.15 0.9;
+    border-radius: 55% 45% 65% 35% / 48% 62% 38% 52%;
+  }
+}
+@keyframes idle-morph-b {
+  0% {
+    scale: 0.9 1.15;
+    border-radius: 45% 55% 50% 50% / 60% 40% 60% 40%;
+  }
+  40% {
+    scale: 1.25 0.85;
+    border-radius: 65% 35% 40% 60% / 45% 55% 45% 55%;
+  }
+  75% {
+    scale: 0.85 1.3;
+    border-radius: 38% 62% 58% 42% / 55% 45% 62% 38%;
+  }
+  100% {
+    scale: 1.1 1;
+    border-radius: 50%;
+  }
 }
 .background--animated .pixels--left {
   animation: idle-float 7s ease-in-out infinite alternate;
