@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { BackButton } from '../components/BackButton'
 import { ArrowRight } from '../components/icons'
 import { PageShell } from '../components/PageShell'
+import { PixelSphere } from '../components/PixelSphere'
 import { MAX_COLORS, MIN_COLORS, SPHERE_COLORS, SPHERES_PER_COLOR, tubeCount } from '../data/ballSort'
 
 export function BallSortSetupPage() {
@@ -12,7 +13,7 @@ export function BallSortSetupPage() {
 
   // Vista previa ilustrativa: el nivel real lo crea `generateLevel` al comenzar
   const preview = Array.from({ length: tubes }, (_, t) =>
-    t < colors ? Array.from({ length: SPHERES_PER_COLOR }, (_, i) => SPHERE_COLORS[(t + i * 3) % colors]) : [],
+    t < colors ? Array.from({ length: SPHERES_PER_COLOR }, (_, i) => (t + i * 3) % colors) : [],
   )
 
   return (
@@ -57,7 +58,7 @@ export function BallSortSetupPage() {
               onClick={() => setColors(i + 1)}
               aria-label={`${i + 1} ${i === 0 ? 'color' : 'colores'}`}
             >
-              <span style={{ background: color }} />
+              <PixelSphere color={i} className="color-scale__sphere" />
               {i + 1}
             </button>
           ))}
@@ -77,7 +78,9 @@ export function BallSortSetupPage() {
           {preview.map((balls, t) => (
             <span key={t} className="tube">
               {balls.map((color, i) => (
-                <span key={i} className="ball" style={{ background: color }} />
+                <span key={i} className="ball">
+                  <PixelSphere color={color} />
+                </span>
               ))}
             </span>
           ))}

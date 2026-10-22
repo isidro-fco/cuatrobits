@@ -1,4 +1,5 @@
-@import '@fontsource-variable/inter';
+@import '@fontsource/jersey-10';
+@import '@fontsource-variable/lexend';
 
 /* ===== Identidad visual (sección 12.1, prototipo A7) ===== */
 :root {
@@ -35,11 +36,20 @@
 
   --duration: 180ms;
 
+  /* Formas de pixel art para recortar con clip-path: círculo de 14 × 14 y esquinas en escalón */
+  --pixel-circle: polygon(28.57% 0%, 71.43% 0%, 71.43% 7.14%, 85.71% 7.14%, 85.71% 14.29%, 92.86% 14.29%, 92.86% 28.57%, 100% 28.57%, 100% 71.43%, 92.86% 71.43%, 92.86% 85.71%, 85.71% 85.71%, 85.71% 92.86%, 71.43% 92.86%, 71.43% 100%, 28.57% 100%, 28.57% 92.86%, 14.29% 92.86%, 14.29% 85.71%, 7.14% 85.71%, 7.14% 71.43%, 0% 71.43%, 0% 28.57%, 7.14% 28.57%, 7.14% 14.29%, 14.29% 14.29%, 14.29% 7.14%, 28.57% 7.14%);
+  --pixel-ellipse: polygon(70% 0%, 70% 8.33%, 83.33% 8.33%, 83.33% 16.67%, 90% 16.67%, 90% 25%, 96.67% 25%, 96.67% 33.33%, 100% 33.33%, 100% 41.67%, 100% 41.67%, 100% 50%, 100% 50%, 100% 58.33%, 100% 58.33%, 100% 66.67%, 96.67% 66.67%, 96.67% 75%, 90% 75%, 90% 83.33%, 83.33% 83.33%, 83.33% 91.67%, 70% 91.67%, 70% 100%, 30% 100%, 30% 91.67%, 16.67% 91.67%, 16.67% 83.33%, 10% 83.33%, 10% 75%, 3.33% 75%, 3.33% 66.67%, 0% 66.67%, 0% 58.33%, 0% 58.33%, 0% 50%, 0% 50%, 0% 41.67%, 0% 41.67%, 0% 33.33%, 3.33% 33.33%, 3.33% 25%, 10% 25%, 10% 16.67%, 16.67% 16.67%, 16.67% 8.33%, 30% 8.33%, 30% 0%);
+  --pixel-corners: polygon(8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px), 0 8px, 4px 8px, 4px 4px, 8px 4px);
+
+  /* Letra pixelada para títulos, botones y números; Lexend, fácil de leer, para los textos */
+  --font-pixel: 'Jersey 10', 'Lexend Variable', system-ui, sans-serif;
+  --font-text: 'Lexend Variable', system-ui, sans-serif;
+
   /* Cursores grandes y de colores, fáciles de ver para los niños (public/cursors) */
   --cursor-default: url('/cursors/flecha.svg') 5 3, default;
   --cursor-pointer: url('/cursors/mano.svg') 12 3, pointer;
 
-  font-family: 'Inter Variable', system-ui, sans-serif;
+  font-family: var(--font-text);
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -112,6 +122,39 @@ textarea {
   box-shadow: var(--focus);
 }
 
+/* Lo que antes iba en negritas gruesas va en letra pixelada; Jersey 10 ya es gruesa y no se le simula negrita */
+h1,
+h2,
+h3,
+strong,
+.btn,
+.choice,
+.pill,
+.eyebrow,
+.logo__text,
+.island__label,
+.section-heading,
+.field-label,
+.toggle__label,
+.stat-card__value,
+.bits-badge,
+.difficulty-number,
+.keyboard__key,
+.bitbot__slot,
+.game-timer,
+.color-count,
+.history__xp,
+.pager,
+.results-hero__cheer,
+.results-subtitle {
+  font-family: var(--font-pixel);
+  font-synthesis-weight: none;
+  font-variant-ligatures: none;
+  /* Jersey 10 tiene la x baja: se agranda para que las minúsculas midan como las de Lexend */
+  font-size-adjust: 0.5;
+  letter-spacing: 0;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -119,6 +162,14 @@ textarea {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* Sprites y símbolos de pixel art (componentes PixelIcon y PixelGlyph) */
+.pixel-icon,
+.pixel-glyph {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
 }
 
 /* ===== Botones ===== */
@@ -192,7 +243,7 @@ textarea {
 .page-title h1 {
   font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 .page-title p {
   margin-top: 0.4rem;

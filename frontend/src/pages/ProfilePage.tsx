@@ -3,6 +3,7 @@ import { Avatar } from '../components/Avatar'
 import { BackButton } from '../components/BackButton'
 import { ArrowRight } from '../components/icons'
 import { PageShell } from '../components/PageShell'
+import { PixelGlyph } from '../components/PixelGlyph'
 import { ProgressBar } from '../components/ProgressBar'
 import { RecoverySection } from '../components/RecoverySection'
 import { ACHIEVEMENTS } from '../data/achievements'
@@ -36,7 +37,7 @@ export function ProfilePage() {
         </div>
         <div className="profile-card__stats">
           <div className="profile-stat profile-stat--xp">
-            <span aria-hidden>✦</span>
+            <PixelGlyph name="sparkle" />
             <strong>{formatNumber(player.xp)} XP</strong>
             <span>Experiencia acumulada</span>
           </div>
@@ -68,7 +69,7 @@ export function ProfilePage() {
             return (
               <li key={a.id} className={`achievement card ${unlocked ? '' : 'achievement--locked'}`}>
                 <span className="achievement__icon" style={{ background: a.background }} aria-hidden>
-                  {a.icon}
+                  <PixelGlyph name={a.icon} />
                 </span>
                 <span>
                   <strong>{a.name}</strong>

@@ -70,7 +70,7 @@
 .logo__text {
   font-size: 1.8rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--navy);
 }
 .logo__text span {
@@ -518,15 +518,15 @@
   width: 80%;
   aspect-ratio: 1;
   padding: 12%;
-  border-radius: var(--radius-lg);
   background: var(--blue-soft);
+  clip-path: var(--pixel-corners);
 }
 
 .eyebrow {
   display: block;
   font-size: 0.85rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--blue);
 }

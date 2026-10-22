@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router'
 import { BackButton } from '../components/BackButton'
+import { PixelIcon } from '../components/PixelIcon'
 import { ArrowRight, Check } from '../components/icons'
 import { PageShell } from '../components/PageShell'
 import { BITBOT_DIFFICULTIES, CATEGORIES, MEMORY_DIFFICULTIES } from '../data/categories'
@@ -93,7 +94,7 @@ function GameSetup({ game }: { game: SetupGame }) {
               onClick={() => setCategory(c.id)}
             >
               <span className="category-emoji" aria-hidden>
-                {c.emoji}
+                <PixelIcon emoji={c.emoji} size={32} />
               </span>
               {c.name}
               {category === c.id && (

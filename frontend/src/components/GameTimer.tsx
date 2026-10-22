@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Stopwatch } from '../utils/stopwatch'
+import { PixelGlyph } from './PixelGlyph'
 import { formatDuration } from '../utils/format'
 
 // Se actualiza por su cuenta para no volver a dibujar el tablero en cada tic
@@ -13,7 +14,7 @@ export function GameTimer({ stopwatch }: { stopwatch: Stopwatch }) {
 
   return (
     <span className="pill pill--blue game-timer">
-      <span aria-hidden>⏱</span> <span className="visually-hidden">Tiempo: </span>
+      <PixelGlyph name="timer" /> <span className="visually-hidden">Tiempo: </span>
       {formatDuration(elapsed)}
     </span>
   )

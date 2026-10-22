@@ -1,3 +1,5 @@
+import type { GlyphName } from './pixelGlyphs'
+
 export const SPHERE_COLORS = [
   '#1a6be8', // azul
   '#ffd35c', // amarillo
@@ -11,8 +13,22 @@ export const SPHERE_COLORS = [
   '#9ed74a', // verde lima
 ]
 
+/** Tono de sombra de cada color, para el relieve de las esferas de pixel art */
+export const SPHERE_SHADES = [
+  '#1152bb',
+  '#e0a800',
+  '#b83a3a',
+  '#1fa57a',
+  '#6d4fd6',
+  '#d9661f',
+  '#1f95aa',
+  '#c4508a',
+  '#0a1736',
+  '#6fa825',
+]
+
 // Cada color lleva un símbolo para no depender solo de la percepción del color (sección 12.3)
-export const SPHERE_SYMBOLS = ['●', '★', '▲', '■', '◆', '♥', '✚', '♣', '☾', '✖']
+export const SPHERE_SYMBOLS: GlyphName[] = ['circle', 'star', 'triangle', 'square', 'diamond', 'heart', 'cross', 'club', 'moon', 'x']
 
 export const SPHERE_NAMES = [
   'azul',

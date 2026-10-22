@@ -1,4 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
+import { PixelGlyph } from '../../components/PixelGlyph'
+import { PixelIcon } from '../../components/PixelIcon'
 import { CATEGORIES, MEMORY_DIFFICULTIES } from '../../data/categories'
 import { CONTENT } from '../../data/content'
 import { useHistoryStore } from '../../stores/historyStore'
@@ -95,7 +97,7 @@ export function MemoryGame({ config, onFinish }: GameProps<MemoryConfig>) {
     <div className="memory">
       <div className="game-toolbar">
         <span className="pill pill--blue">
-          <span aria-hidden>{category.emoji}</span> {category.name} · {difficulty.name}
+          <PixelIcon emoji={category.emoji} size={16} /> {category.name} · {difficulty.name}
         </span>
         <span className="pill pill--mint">
           Parejas: {state.matched.size} / {pairs}
@@ -124,8 +126,12 @@ export function MemoryGame({ config, onFinish }: GameProps<MemoryConfig>) {
               onClick={() => flip(i)}
             >
               <span className="memory-card__inner" aria-hidden>
-                <span className="memory-card__back">★</span>
-                <span className="memory-card__front">{card.image.emoji}</span>
+                <span className="memory-card__back">
+                  <PixelGlyph name="star" />
+                </span>
+                <span className="memory-card__front">
+                  <PixelIcon emoji={card.image.emoji} size="62%" />
+                </span>
               </span>
             </button>
           )

@@ -1,4 +1,6 @@
 import { useEffect, useEffectEvent, useState, type CSSProperties } from 'react'
+import { PixelGlyph } from '../../components/PixelGlyph'
+import { PixelSphere } from '../../components/PixelSphere'
 import { playSfx } from '../../services/audio'
 import { useActivePlayer } from '../../stores/playerStore'
 import type { GameProps } from '../types'
@@ -7,6 +9,9 @@ import { AI_DIFFICULTY_NAMES, type ConnectFourConfig, DISC_SYMBOLS, pickDiscColo
 import { applyMove, COLS, createBoard, type Disc, getStatus, type Position, ROWS } from './logic'
 
 const AI_DELAY_MS = 600
+
+// Sombra de la ficha: su propio color oscurecido
+const DISC_SHADE = 'color-mix(in srgb, var(--disc), #14295c 30%)'
 
 export function ConnectFourGame({ config, paused, onFinish }: GameProps<ConnectFourConfig>) {
   const player = useActivePlayer()
@@ -83,12 +88,13 @@ export function ConnectFourGame({ config, paused, onFinish }: GameProps<ConnectF
             style={{ '--disc': colors[i].color, '--disc-ink': colors[i].ink } as CSSProperties}
           >
             <span className="c4__disc c4__disc--small" aria-hidden>
-              {DISC_SYMBOLS[i]}
+              <PixelSphere fill="var(--disc)" shade={DISC_SHADE} />
+              <PixelGlyph name={DISC_SYMBOLS[i]} />
             </span>
             <span>
               <strong>{name}</strong>
               <span className="c4__player-sub">
-                Ficha {colors[i].name} {DISC_SYMBOLS[i]}
+                Ficha {colors[i].name} <PixelGlyph name={DISC_SYMBOLS[i]} />
               </span>
             </span>
           </div>
@@ -99,38 +105,41 @@ export function ConnectFourGame({ config, paused, onFinish }: GameProps<ConnectF
         {statusText}
       </p>
 
-      <div className="c4__board">
-        {Array.from({ length: COLS }, (_, col) => {
-          const full = board[0][col] !== null
-          return (
-            <button
-              key={col}
-              type="button"
-              className="c4__column"
-              aria-label={`Columna ${col + 1}${full ? ', llena' : ''}`}
-              disabled={full || aiTurn || status.kind !== 'playing'}
-              onClick={() => play(col)}
-            >
-              {Array.from({ length: ROWS }, (_, row) => {
-                const cell = board[row][col]
-                const isLast = lastMove?.[0] === row && lastMove[1] === col
-                return (
-                  <span key={row} className="c4__cell">
-                    {cell !== null && (
-                      <span
-                        className={`c4__disc ${isLast ? 'c4__disc--drop' : ''} ${winCells.has(`${row}-${col}`) ? 'c4__disc--win' : ''}`}
-                        style={{ '--disc': colors[cell].color, '--disc-ink': colors[cell].ink, '--drop-rows': row + 1 } as CSSProperties}
-                        aria-hidden
-                      >
-                        {DISC_SYMBOLS[cell]}
-                      </span>
-                    )}
-                  </span>
-                )
-              })}
-            </button>
-          )
-        })}
+      <div className="c4__frame">
+        <div className="c4__board">
+          {Array.from({ length: COLS }, (_, col) => {
+            const full = board[0][col] !== null
+            return (
+              <button
+                key={col}
+                type="button"
+                className="c4__column"
+                aria-label={`Columna ${col + 1}${full ? ', llena' : ''}`}
+                disabled={full || aiTurn || status.kind !== 'playing'}
+                onClick={() => play(col)}
+              >
+                {Array.from({ length: ROWS }, (_, row) => {
+                  const cell = board[row][col]
+                  const isLast = lastMove?.[0] === row && lastMove[1] === col
+                  return (
+                    <span key={row} className="c4__cell">
+                      {cell !== null && (
+                        <span
+                          className={`c4__disc ${isLast ? 'c4__disc--drop' : ''} ${winCells.has(`${row}-${col}`) ? 'c4__disc--win' : ''}`}
+                          style={{ '--disc': colors[cell].color, '--disc-ink': colors[cell].ink, '--drop-rows': row + 1 } as CSSProperties}
+                          aria-hidden
+                        >
+                          <PixelSphere fill="var(--disc)" shade={DISC_SHADE} />
+                          <PixelGlyph name={DISC_SYMBOLS[cell]} />
+                        </span>
+                      )}
+                    </span>
+                  )
+                })}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

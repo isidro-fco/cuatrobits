@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { SPHERE_COLORS, SPHERE_NAMES, SPHERE_SYMBOLS } from '../../data/ballSort'
+import { SPHERE_NAMES, SPHERE_SYMBOLS } from '../../data/ballSort'
 import { Restart, Shuffle } from '../../components/icons'
+import { PixelGlyph } from '../../components/PixelGlyph'
+import { PixelSphere } from '../../components/PixelSphere'
 import { playSfx } from '../../services/audio'
 import type { GameProps } from '../types'
 import type { BallSortConfig } from './config'
@@ -95,7 +97,8 @@ export function BallSortGame({ config, onFinish }: GameProps<BallSortConfig>) {
         <span className="game-toolbar__spacer" />
         <div className="ball-sort__actions">
           <button type="button" className="btn btn--outline btn--small" onClick={undo} disabled={history.length === 0 || solved}>
-            ↶ Deshacer
+            <PixelGlyph name="undo" />
+            Deshacer
           </button>
           <button type="button" className="btn btn--outline btn--small" onClick={() => restartLevel()} disabled={solved}>
             <Restart />
@@ -138,10 +141,10 @@ export function BallSortGame({ config, onFinish }: GameProps<BallSortConfig>) {
                     <span
                       key={i}
                       className={`ball ${isTop && selected === t ? 'is-lifted' : ''} ${isTop && lastTarget === t ? 'is-dropped' : ''}`}
-                      style={{ background: SPHERE_COLORS[color] }}
                       aria-hidden
                     >
-                      {SPHERE_SYMBOLS[color]}
+                      <PixelSphere color={color} />
+                      <PixelGlyph name={SPHERE_SYMBOLS[color]} className="ball__symbol" />
                     </span>
                   )
                 })}

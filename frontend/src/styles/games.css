@@ -99,19 +99,21 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: clamp(0.2rem, 1vw, 0.5rem);
+  padding: clamp(0.4rem, 1.5vw, 0.9rem);
+  background: var(--blue);
+  clip-path: var(--pixel-corners);
+}
+/* El recorte en escalón se comería la sombra; el borde inferior oscuro va en el marco */
+.c4__frame {
   width: min(100%, 560px);
   margin: 0 auto;
-  padding: clamp(0.4rem, 1.5vw, 0.9rem);
-  border-radius: var(--radius);
-  background: var(--blue);
-  box-shadow: 0 8px 0 var(--blue-dark);
+  filter: drop-shadow(0 8px 0 var(--blue-dark));
 }
 .c4__column {
   display: grid;
   gap: clamp(0.2rem, 1vw, 0.5rem);
   padding: 0.2rem;
   border: 0;
-  border-radius: var(--radius-sm);
   background: transparent;
   transition: background-color var(--duration);
 }
@@ -126,22 +128,16 @@
   display: grid;
   place-items: center;
   aspect-ratio: 1;
-  border-radius: 50%;
   background: var(--blue-soft);
-  box-shadow: inset 0 3px 0 rgb(20 41 92 / 0.25);
-  overflow: hidden;
+  box-shadow: inset 0 4px 0 rgb(20 41 92 / 0.25);
+  clip-path: var(--pixel-circle);
 }
 .c4__disc {
   display: grid;
   place-items: center;
+  position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  background: var(--disc);
-  /* El borde oscuro separa la ficha del hueco claro, incluso con los colores más luminosos */
-  box-shadow:
-    inset 0 0 0 3px rgb(20 41 92 / 0.28),
-    inset 0 -5px 0 rgb(0 0 0 / 0.15);
   color: var(--disc-ink);
   font-size: clamp(0.8rem, 3.5vw, 1.4rem);
   font-weight: 900;
@@ -150,15 +146,21 @@
   flex-shrink: 0;
   width: 2.6rem;
   height: 2.6rem;
-  border: 2px solid rgb(20 41 92 / 0.2);
   font-size: 1.2rem;
+}
+/* La ficha es una esfera de pixel art (el contorno azul marino la separa del hueco claro) y el símbolo va encima */
+.c4__disc > .pixel-sphere {
+  position: absolute;
+  inset: 0;
+}
+.c4__disc > .pixel-glyph {
+  position: relative;
 }
 .c4__disc--drop {
   animation: c4-drop calc(120ms + var(--drop-rows) * 45ms) cubic-bezier(0.5, 0, 0.9, 0.5);
 }
 .c4__disc--win {
-  outline: 4px solid var(--navy);
-  outline-offset: -4px;
+  filter: drop-shadow(0 0 2px var(--navy)) brightness(1.15);
   animation: c4-win 900ms ease-in-out infinite alternate;
 }
 @keyframes c4-drop {
@@ -316,22 +318,16 @@
   height: auto;
   padding: 0;
   cursor: var(--cursor-pointer);
-  transition:
-    border-color var(--duration),
-    transform var(--duration);
+  transition: transform var(--duration);
 }
 .tube--game[data-selected='true'] {
-  border-color: var(--blue);
   transform: translateY(-4px);
-}
-.tube--game[data-complete='true'] {
-  border-color: var(--mint-dark);
 }
 .tube__inner {
   display: flex;
   flex-direction: column-reverse;
   gap: 0.15rem;
-  height: 15rem;
+  height: calc(var(--tube-content) + 0.6rem);
   padding: 0.3rem;
 }
 .tube__inner.is-rejected {
@@ -341,12 +337,14 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: rgb(255 255 255 / 0.85);
+  color: rgb(255 255 255 / 0.9);
   font-size: 1.1rem;
   line-height: 1;
-  text-shadow: 0 1px 1px rgb(20 41 92 / 0.6);
-  box-shadow: inset 0 -4px 0 rgb(0 0 0 / 0.15);
   transition: transform var(--duration);
+}
+.ball__symbol {
+  position: relative;
+  filter: drop-shadow(0 1px 0 rgb(20 41 92 / 0.6));
 }
 .ball.is-lifted {
   transform: translateY(-1.5rem);
@@ -429,10 +427,7 @@
     grid-template-columns: 1fr;
   }
   .tube--game {
-    width: 2.6rem;
-  }
-  .tube__inner {
-    height: 11.5rem;
+    --tube-width: 2.6rem;
   }
   .ball-sort .ball {
     font-size: 0.8rem;

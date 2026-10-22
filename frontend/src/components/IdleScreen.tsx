@@ -7,10 +7,13 @@ import { LogoMark } from './Logo'
 /** Tiempo sin actividad antes de mostrar el protector de pantalla */
 export const IDLE_MS = 30_000
 
-/** Duración de la salida: las figuras vuelven a su lugar y después aparece la pantalla */
-export const LEAVE_MS = 5000
 const RETURN_MS = 3500
 const FADE_DELAY_MS = 3000
+/** Fundido con el que reaparece la pantalla (las islas del lobby) */
+const FADE_MS = 800
+
+/** Duración de la salida: las figuras vuelven a su lugar y después aparece la pantalla */
+export const LEAVE_MS = FADE_DELAY_MS + FADE_MS
 
 /** Distancia que debe moverse el puntero para despertar; evita que un movimiento sintético lo cierre al abrirse */
 const WAKE_DISTANCE = 12
@@ -68,7 +71,7 @@ export function IdleScreen() {
       el.animate([from, to], { duration: RETURN_MS, easing, fill: 'forwards' })
     })
     dialog.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: LEAVE_MS - FADE_DELAY_MS,
+      duration: FADE_MS,
       delay: FADE_DELAY_MS,
       easing: 'ease-in-out',
       fill: 'forwards',

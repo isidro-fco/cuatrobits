@@ -1,4 +1,5 @@
 import type { AiDifficulty } from './ai'
+import type { GlyphName } from '../../data/pixelGlyphs'
 
 export type ConnectFourConfig = { mode: 'ai'; difficulty: AiDifficulty } | { mode: 'local' }
 
@@ -58,7 +59,7 @@ const SIMILAR_PAIRS = [
 export const areSimilar = (a: DiscStyle, b: DiscStyle) =>
   SIMILAR_PAIRS.some(([x, y]) => (a.name === x && b.name === y) || (a.name === y && b.name === x))
 
-export const DISC_SYMBOLS = ['★', '●'] as const
+export const DISC_SYMBOLS = ['star', 'circle'] as const satisfies readonly GlyphName[]
 
 /** Elige dos colores distintos al azar que se distingan bien entre sí */
 export function pickDiscColors(random: () => number = Math.random): [DiscStyle, DiscStyle] {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { CATEGORIES, MEMORY_DIFFICULTIES } from '../data/categories'
 import { CONTENT } from '../data/content'
+import { PIXEL_ICONS } from '../data/pixelArt'
 import { parseMemoryConfig } from '../games/memory/config'
 import {
   createDeck,
@@ -58,6 +59,11 @@ describe('mazo de Memorama (sección 16.5)', () => {
       expect(list.length).toBeGreaterThanOrEqual(18)
       expect(new Set(list.map((i) => i.emoji)).size).toBe(list.length)
     }
+  })
+
+  it('cada imagen y cada categoría tiene su sprite de pixel art (data/pixelArt.ts)', () => {
+    const emojis = [...CATEGORIES.map((c) => c.emoji), ...CATEGORIES.flatMap((c) => CONTENT[c.id].images.map((i) => i.emoji))]
+    expect(emojis.filter((e) => PIXEL_ICONS[e] === undefined)).toEqual([])
   })
 })
 

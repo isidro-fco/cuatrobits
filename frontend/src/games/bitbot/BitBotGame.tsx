@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { PixelGlyph } from '../../components/PixelGlyph'
+import { PixelIcon } from '../../components/PixelIcon'
 import { CATEGORIES, BITBOT_DIFFICULTIES } from '../../data/categories'
 import { CONTENT } from '../../data/content'
 import { bitbotBodyColor, DEFAULT_BITBOT } from '../../data/cosmetics'
@@ -94,7 +96,7 @@ export function BitBotGame({ config, paused, onFinish }: GameProps<BitBotConfig>
         <BitBotRobot assembled={assembledPieces(state)} celebrating={status === 'won'} color={bitbotBodyColor(look.color)} />
         <div className="bitbot__info">
           <span className="pill pill--blue">
-            <span aria-hidden>{category.emoji}</span> {category.name} · {difficultyName}
+            <PixelIcon emoji={category.emoji} size={16} /> {category.name} · {difficultyName}
           </span>
           <p className="bitbot__hint">
             <strong>Pista:</strong> {entry.hint}
@@ -104,7 +106,7 @@ export function BitBotGame({ config, paused, onFinish }: GameProps<BitBotConfig>
             <span className="bitbot__hearts" aria-hidden>
               {Array.from({ length: MAX_ERRORS }, (_, i) => (
                 <span key={i} className={i < left ? 'is-full' : ''}>
-                  {i < left ? '♥' : '♡'}
+                  <PixelGlyph name={i < left ? 'heart' : 'heartOutline'} />
                 </span>
               ))}
             </span>
@@ -151,7 +153,7 @@ export function BitBotGame({ config, paused, onFinish }: GameProps<BitBotConfig>
                   {letter}
                   {keyState && (
                     <span className="keyboard__mark" aria-hidden>
-                      {keyState === 'right' ? '✓' : '✗'}
+                      <PixelGlyph name={keyState === 'right' ? 'check' : 'wrong'} />
                     </span>
                   )}
                 </button>

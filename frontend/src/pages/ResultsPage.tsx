@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router'
 import { Restart } from '../components/icons'
 import { PageShell } from '../components/PageShell'
+import { PixelGlyph } from '../components/PixelGlyph'
 import { PixelSprite } from '../components/PixelSprite'
 import { StatCard } from '../components/StatCard'
 import { GAMES } from '../data/games'
@@ -96,7 +97,7 @@ export function ResultsPage() {
         <div className="rewards__grid">
           <div className="reward reward--xp">
             <span className="reward__icon" aria-hidden>
-              ★
+              <PixelGlyph name="star" />
             </span>
             <span>
               <strong>+{result.xp} XP</strong>
@@ -117,7 +118,7 @@ export function ResultsPage() {
           {result.levelUp !== undefined && (
             <div className="reward reward--level">
               <span className="reward__icon" aria-hidden>
-                ▲
+                <PixelGlyph name="triangle" />
               </span>
               <span>
                 <strong>¡Nivel {result.levelUp}!</strong>
@@ -128,7 +129,7 @@ export function ResultsPage() {
           {(result.achievements ?? []).map((name) => (
             <div key={name} className="reward reward--achievement">
               <span className="reward__icon" aria-hidden>
-                ◆
+                <PixelGlyph name="diamond" />
               </span>
               <span>
                 <strong>¡{name}!</strong>
