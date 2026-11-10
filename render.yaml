@@ -8,7 +8,7 @@ services:
     # corepack usa la versión de pnpm de package.json (packageManager)
     buildCommand: corepack pnpm install --frozen-lockfile && corepack pnpm --filter backend build
     # Aplica las migraciones pendientes antes de arrancar; si ya está al día no hace nada
-    startCommand: node backend/dist/migrate.js && node backend/dist/server.js
+    startCommand: node backend/dist/migrar.js && node backend/dist/servidor.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION

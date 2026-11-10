@@ -1,71 +1,77 @@
-export type GameId = 'connect-four' | 'bitbot' | 'ball-sort' | 'memory'
+/**
+ * Archivo: index.ts
+ * Módulo: frontend / types
+ * Descripción: Tipos compartidos del dominio: jugador, partida, identificadores de juego, avatar y
+ *              categoría.
+ * Requerimientos: RF01, RF50, RNF10
+ * Autores: Isidro Francisco Pérez Paz y Angel Rey Rodriguez
+ * Fecha: 2026-10-21
+ * Última modificación: 2026-11-09, Isidro F. Pérez Paz
+ */
 
-export type AvatarId = 'robot' | 'cat' | 'dino' | 'fox' | 'astronaut' | 'monster'
+// ---------- Tipos ----------
+// ---------- Tipos ----------
+export type IdJuego = 'connect-four' | 'bitbot' | 'ball-sort' | 'memory'
 
-export type Difficulty = 'easy' | 'medium' | 'hard'
+export type IdAvatar = 'robot' | 'cat' | 'dino' | 'fox' | 'astronaut' | 'monster'
 
-export type CategoryId =
-  | 'animals'
-  | 'colors'
-  | 'fruits'
-  | 'school'
-  | 'transport'
-  | 'nature'
-  | 'space'
-  | 'technology'
+export type Dificultad = 'easy' | 'medium' | 'hard'
 
-export interface Player {
+export type IdCategoria =
+  'animals' | 'colors' | 'fruits' | 'school' | 'transport' | 'nature' | 'space' | 'technology'
+
+export interface Jugador {
   id: string
   username: string
-  avatar: AvatarId
+  avatar: IdAvatar
   xp: number
   bits: number
-  achievements: string[]
+  logros: string[]
   /** Artículos de BitBot comprados (sección 9.4) */
-  items: string[]
+  articulos: string[]
   /** Compras que aún no se envían al servidor */
-  pendingItems: string[]
+  articulosPendientes: string[]
   /** Apariencia elegida para BitBot */
-  bitbot: { color: string; accessory: string }
-  createdAt: string
+  bitbot: { color: string; accesorio: string }
+  creadoEn: string
   /** Ya existe en el servidor. Los perfiles anteriores a la etapa 3 se registran al sincronizar. */
-  registered?: boolean
+  estaRegistrado?: boolean
   /** El nombre lo tomó otro jugador antes de poder registrar este perfil */
-  nameConflict?: boolean
+  tieneConflictoNombre?: boolean
   /** Token secreto con el que este dispositivo se identifica ante el servidor (sección 4.3) */
-  authToken?: string
+  tokenAutenticacion?: string
   /** El perfil quedó protegido por otro dispositivo: hay que recuperarlo con el código secreto */
-  needsRecovery?: boolean
+  esRecuperacionNecesaria?: boolean
   /** Código secreto para recuperar el perfil en otro dispositivo */
-  recoveryCode?: string
+  codigoRecuperacion?: string
   /** El jugador ya vio el aviso para guardar su código */
-  recoveryCodeSeen?: boolean
+  esCodigoRecuperacionVisto?: boolean
 }
 
 /** `rejected`: el servidor no aceptó la partida; se conserva solo en este dispositivo */
-export type SyncStatus = 'pending' | 'synced' | 'rejected'
+export type EstadoSync = 'pending' | 'synced' | 'rejected'
 
-export interface GameRecord {
+export interface Partida {
   id: string
-  playerId: string
-  game: GameId
-  result: 'win' | 'loss' | 'draw' | 'completed'
-  durationMs: number
-  xpEarned: number
+  jugadorId: string
+  juego: IdJuego
+  resultado: 'win' | 'loss' | 'draw' | 'completed'
+  duracionMs: number
+  xpObtenida: number
   /** No existe en las partidas guardadas antes de la etapa 4 */
-  bitsEarned?: number
-  summary: string
+  bitsObtenidos?: number
+  resumen: string
   /** Datos específicos del juego; se guardan en `game_details` */
-  details?: Record<string, unknown>
-  playedAt: string
-  syncStatus: SyncStatus
+  detalles?: Record<string, unknown>
+  jugadaEn: string
+  estadoSincronizacion: EstadoSync
   /** Motivo del rechazo del servidor */
-  syncError?: string
+  errorSincronizacion?: string
 }
 
-export interface Settings {
-  music: boolean
-  sfx: boolean
-  reducedMotion: boolean
-  showTimer: boolean
+export interface Ajustes {
+  estaMusicaActiva: boolean
+  estaSonidoActivo: boolean
+  esMovimientoReducido: boolean
+  esCronometroVisible: boolean
 }

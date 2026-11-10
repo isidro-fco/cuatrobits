@@ -1,16 +1,34 @@
-import type { AvatarId } from '../types'
+/**
+ * Archivo: sprites.ts
+ * Módulo: frontend / data
+ * Descripción: Sprites de BitBot y de los avatares, con los anclajes de los accesorios.
+ * Requerimientos: RF28, RF49, RNF08
+ * Autores: Isidro Francisco Pérez Paz y Angel Rey Rodriguez
+ * Fecha: 2026-10-21
+ * Última modificación: 2026-11-09, Isidro F. Pérez Paz
+ */
 
-export interface SpriteDefinition {
+// ---------- Módulos internos ----------
+import type { IdAvatar } from '../types'
+
+// ---------- Tipos ----------
+export interface DefinicionSprite {
   /** Mitad izquierda de cada fila; se refleja para obtener un sprite simétrico */
-  half: string[]
-  palette: Record<string, string>
+  mitad: string[]
+  paleta: Record<string, string>
 }
 
-const NAVY = '#14295c'
-const WHITE = '#ffffff'
+export type AnclaAccesorio = 'top' | 'eyes' | 'neck'
 
-export const BITBOT_SPRITE: SpriteDefinition = {
-  half: [
+// ---------- Constantes ----------
+/** Color azul marino del contorno de los sprites */
+const AZUL_MARINO = '#14295c'
+/** Color blanco que comparten las paletas de los sprites */
+const BLANCO = '#ffffff'
+
+/** Sprite base de BitBot; el color del cuerpo cambia con el Taller */
+export const SPRITE_BITBOT: DefinicionSprite = {
+  mitad: [
     '.....y',
     '.....k',
     '.bbbbb',
@@ -24,13 +42,14 @@ export const BITBOT_SPRITE: SpriteDefinition = {
     '...bbb',
     '..bbbb',
   ],
-  palette: { b: '#1a6be8', w: WHITE, k: NAVY, y: '#ffd35c' },
+  paleta: { b: '#1a6be8', w: BLANCO, k: AZUL_MARINO, y: '#ffd35c' },
 }
 
-export const AVATAR_SPRITES: Record<AvatarId, SpriteDefinition> = {
-  robot: BITBOT_SPRITE,
+/** Sprite de cada avatar de la colección */
+export const SPRITES_AVATAR: Record<IdAvatar, DefinicionSprite> = {
+  robot: SPRITE_BITBOT,
   cat: {
-    half: [
+    mitad: [
       '.o....',
       '.oo...',
       '.ooo..',
@@ -44,10 +63,10 @@ export const AVATAR_SPRITES: Record<AvatarId, SpriteDefinition> = {
       '...ooo',
       '......',
     ],
-    palette: { o: '#ff8c42', l: '#ffe1c7', k: NAVY, p: '#f07cb2' },
+    paleta: { o: '#ff8c42', l: '#ffe1c7', k: AZUL_MARINO, p: '#f07cb2' },
   },
   dino: {
-    half: [
+    mitad: [
       '.....d',
       '....dd',
       '..gggd',
@@ -61,10 +80,10 @@ export const AVATAR_SPRITES: Record<AvatarId, SpriteDefinition> = {
       '..gggg',
       '......',
     ],
-    palette: { g: '#5ccf7a', d: '#2f9e5a', w: WHITE, k: NAVY },
+    paleta: { g: '#5ccf7a', d: '#2f9e5a', w: BLANCO, k: AZUL_MARINO },
   },
   fox: {
-    half: [
+    mitad: [
       'f.....',
       'ff....',
       'fff...',
@@ -78,10 +97,10 @@ export const AVATAR_SPRITES: Record<AvatarId, SpriteDefinition> = {
       '......',
       '......',
     ],
-    palette: { f: '#9b7cf0', w: WHITE, k: NAVY },
+    paleta: { f: '#9b7cf0', w: BLANCO, k: AZUL_MARINO },
   },
   astronaut: {
-    half: [
+    mitad: [
       '..ssss',
       '.swwww',
       'swwwww',
@@ -95,10 +114,10 @@ export const AVATAR_SPRITES: Record<AvatarId, SpriteDefinition> = {
       '.srwww',
       '.swwww',
     ],
-    palette: { s: '#b9c5d3', w: WHITE, v: NAVY, c: '#45c6db', r: '#ef5b5b' },
+    paleta: { s: '#b9c5d3', w: BLANCO, v: AZUL_MARINO, c: '#45c6db', r: '#ef5b5b' },
   },
   monster: {
-    half: [
+    mitad: [
       '.o....',
       '.oo...',
       '..yyyy',
@@ -112,21 +131,21 @@ export const AVATAR_SPRITES: Record<AvatarId, SpriteDefinition> = {
       '..y.yy',
       '......',
     ],
-    palette: { y: '#ffd35c', o: '#e0a800', w: WHITE, k: NAVY },
+    paleta: { y: '#ffd35c', o: '#e0a800', w: BLANCO, k: AZUL_MARINO },
   },
 }
 
-export type AccessoryAnchor = 'top' | 'eyes' | 'neck'
-
 /**
- * Cómo se visten los avatares con los artículos del Taller: `body` es la letra de la paleta que
- * cambia con los colores y cada anclaje dice cuántas filas se mueven los accesorios respecto a BitBot.
+ * Cómo se visten los avatares con los artículos del Taller: `cuerpo` es la letra de la paleta que
+ * cambia con los colores y cada anclaje dice cuántas filas se mueven los accesorios respecto a
+ * BitBot.
  */
-export const AVATAR_FIT: Record<AvatarId, { body: string } & Record<AccessoryAnchor, number>> = {
-  robot: { body: 'b', top: 0, eyes: 0, neck: 0 },
-  cat: { body: 'o', top: 1, eyes: 1, neck: 0 },
-  dino: { body: 'g', top: 0, eyes: 0, neck: 0 },
-  fox: { body: 'f', top: 1, eyes: 1, neck: -1 },
-  astronaut: { body: 's', top: 0, eyes: 0, neck: 0 },
-  monster: { body: 'y', top: 0, eyes: 0, neck: -1 },
-}
+export const AJUSTE_AVATAR: Record<IdAvatar, { cuerpo: string } & Record<AnclaAccesorio, number>> =
+  {
+    robot: { cuerpo: 'b', top: 0, eyes: 0, neck: 0 },
+    cat: { cuerpo: 'o', top: 1, eyes: 1, neck: 0 },
+    dino: { cuerpo: 'g', top: 0, eyes: 0, neck: 0 },
+    fox: { cuerpo: 'f', top: 1, eyes: 1, neck: -1 },
+    astronaut: { cuerpo: 's', top: 0, eyes: 0, neck: 0 },
+    monster: { cuerpo: 'y', top: 0, eyes: 0, neck: -1 },
+  }

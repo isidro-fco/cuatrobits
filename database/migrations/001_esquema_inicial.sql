@@ -1,4 +1,13 @@
--- Esquema inicial de CuatroBits (especificación, sección 13.3)
+/**
+ * Archivo: 001_esquema_inicial.sql
+ * Módulo: database / migrations
+ * Descripción: Esquema inicial de CuatroBits (especificación, sección 13.3). Se conserva con los
+ *              nombres originales; la migración 006 los renombra al español.
+ * Requerimientos: RIE02, RDC07, RDC10, RDC11
+ * Autores: Isidro Francisco Pérez Paz y Angel Rey Rodriguez
+ * Fecha: 2026-10-21
+ * Última modificación: 2026-11-09, Isidro F. Pérez Paz
+ */
 
 CREATE TABLE players (
   id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),

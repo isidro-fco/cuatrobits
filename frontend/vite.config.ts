@@ -13,7 +13,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    setupFiles: ['./src/tests/setup.ts'],
+    setupFiles: ['./src/tests/configuracionPruebas.ts'],
     // Las partidas completas con userEvent pueden tardar más cuando el backend se prueba en paralelo
     testTimeout: 15_000,
   },

@@ -1,28 +1,42 @@
-import { describe, expect, it } from 'vitest'
-import { normalizeUsername, validateUsername } from '../utils/username'
+/**
+ * Archivo: username.test.ts
+ * Módulo: frontend / tests
+ * Descripción: Pruebas de la normalización y validación del nombre de usuario.
+ * Requerimientos: RF02
+ * Autores: Isidro Francisco Pérez Paz y Angel Rey Rodriguez
+ * Fecha: 2026-10-21
+ * Última modificación: 2026-11-09, Isidro F. Pérez Paz
+ */
 
-describe('normalizeUsername', () => {
+// ---------- Librerías externas ----------
+import { describe, expect, it } from 'vitest'
+
+// ---------- Módulos internos ----------
+import { normalizarUsername, validarUsername } from '../utils/username'
+
+// ---------- Pruebas ----------
+describe('normalizarUsername', () => {
   it('no distingue mayúsculas (sección 4.1)', () => {
-    expect(normalizeUsername('Jugador01')).toBe(normalizeUsername('jugador01'))
+    expect(normalizarUsername('Jugador01')).toBe(normalizarUsername('jugador01'))
   })
 
   it('ignora espacios al inicio y al final', () => {
-    expect(normalizeUsername('  Luna ')).toBe('luna')
+    expect(normalizarUsername('  Luna ')).toBe('luna')
   })
 })
 
-describe('validateUsername', () => {
+describe('validarUsername', () => {
   it('acepta letras con tilde, ñ, números y guion bajo', () => {
-    expect(validateUsername('Ñandú_7')).toBeNull()
+    expect(validarUsername('Ñandú_7')).toBeNull()
   })
 
   it('rechaza nombres demasiado cortos o largos', () => {
-    expect(validateUsername('ab')).not.toBeNull()
-    expect(validateUsername('a'.repeat(16))).not.toBeNull()
+    expect(validarUsername('ab')).not.toBeNull()
+    expect(validarUsername('a'.repeat(16))).not.toBeNull()
   })
 
   it('rechaza espacios y símbolos', () => {
-    expect(validateUsername('Luna Azul')).not.toBeNull()
-    expect(validateUsername('luna!')).not.toBeNull()
+    expect(validarUsername('Luna Azul')).not.toBeNull()
+    expect(validarUsername('luna!')).not.toBeNull()
   })
 })

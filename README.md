@@ -43,21 +43,21 @@ Si el frontend debe usar un backend en otro puerto: `API_URL=http://localhost:31
 
 | Método | Ruta | Respuesta |
 |---|---|---|
-| POST | `/api/players` | `{ id?, username, avatar, token }` · 201 creado (incluye `recoveryCode`, solo esta vez) · 200 reintento con el mismo `id` y `token` · 409 `username-taken` / `profile-claimed` |
-| POST | `/api/players/recover` | `{ username, code, token }` → perfil completo e historial · 401 `invalid-recovery` · 429 `too-many-attempts` |
+| POST | `/api/players` | `{ id?, username, avatar, token }` · 201 creado (incluye `codigoRecuperacion`, solo esta vez) · 200 reintento con el mismo `id` y `token` · 409 `username-taken` / `profile-claimed` |
+| POST | `/api/players/recover` | `{ username, codigo, token }` → perfil completo e historial · 401 `invalid-recovery` · 429 `too-many-attempts` |
 | POST | `/api/players/:id/recovery-code` | Código para perfiles creados antes de existir la recuperación · 409 `code-exists` |
 | GET | `/api/players/:id` | Perfil con experiencia, nivel, Bits, logros y artículos |
-| GET | `/api/players/:id/history?limit=&offset=` | Partidas con sus detalles, de la más reciente a la más antigua |
+| GET | `/api/players/:id/history?limite=&desplazamiento=` | Partidas con sus detalles, de la más reciente a la más antigua |
 | GET | `/api/players/:id/stats` | Totales y resultados por juego |
 | POST | `/api/games` | 201 guardada · 200 `duplicate` · 400 `validation-error` · 403 partida de otro jugador |
-| POST | `/api/players/:id/items` | Compra un artículo de BitBot `{ itemId }` · 201 comprado · 200 `duplicate` · 409 `insufficient-bits` |
-| POST | `/api/games/sync` | `{ results: [{ id, status: created \| duplicate \| rejected }] }`, hasta 100 partidas |
+| POST | `/api/players/:id/items` | Compra un artículo de BitBot `{ idArticulo }` · 201 comprado · 200 `duplicate` · 409 `insufficient-bits` |
+| POST | `/api/games/sync` | `{ partidas }` → `{ resultados: [{ id, estatus: created \| duplicate \| rejected }] }`, hasta 100 partidas |
 | GET | `/api/health` | Estado del servidor y de la base de datos |
 
 Todas las rutas, salvo crear, recuperar y `health`, exigen la cabecera `Authorization: Bearer <token>`
 del jugador: 401 `unauthorized` sin token válido · 403 `forbidden` si el token es de otro jugador.
 
-Los errores tienen la forma `{ error, message, details? }`. El servidor valida cada partida (resultado
+Los errores tienen la forma `{ error, mensaje, detalles? }`. El servidor valida cada partida (resultado
 posible para el juego, estadísticas coherentes y experiencia según la tabla de la sección 9.1) y la
 sincronización es idempotente: reenviar una partida no la duplica ni suma experiencia otra vez.
 

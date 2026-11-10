@@ -72,7 +72,7 @@ No hace falta crear las tablas a mano: el backend aplica las migraciones al arra
 Qué hace Render en cada despliegue:
 - **Compilar:** `corepack pnpm install --frozen-lockfile && corepack pnpm --filter backend build`.
   `corepack` usa la versión de pnpm fijada en `package.json`.
-- **Arrancar:** `node backend/dist/migrate.js && node backend/dist/server.js`. Primero aplica las
+- **Arrancar:** `node backend/dist/migrar.js && node backend/dist/servidor.js`. Primero aplica las
   migraciones pendientes; si ya están todas, no hace nada.
 
 > El plan gratuito de Render **se duerme tras 15 minutos sin visitas** y tarda hasta un minuto en

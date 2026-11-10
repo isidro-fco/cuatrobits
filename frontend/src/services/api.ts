@@ -1,43 +1,91 @@
-// Cliente de la API REST (sección 15). En desarrollo Vite redirige /api al backend; en producción
-// `VITE_API_URL` indica dónde está (por ejemplo, el servicio de Render).
+/**
+ * Archivo: api.ts
+ * Módulo: frontend / services
+ * Descripción: Cliente de la API REST (sección 15). En desarrollo Vite redirige /api al backend; en
+ *              producción VITE_API_URL indica dónde está (por ejemplo, el servicio de Render).
+ * Requerimientos: RIE01, RF61
+ * Autores: Isidro Francisco Pérez Paz y Angel Rey Rodriguez
+ * Fecha: 2026-10-21
+ * Última modificación: 2026-11-09, Isidro F. Pérez Paz
+ */
 
-const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+// ---------- Constantes ----------
+const URL_API = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
-/** El servidor respondió con un error */
-export class ApiError extends Error {
-  readonly status: number
-  readonly code: string
+// ---------- Servicio ----------
+/**
+ * El servidor respondió con un error
+ * @see RF61, RIE01
+ */
+export class ErrorApi extends Error {
+  /** Código HTTP de la respuesta */
+  readonly estatus: number
+  /** Código estable del error que envió el servidor, por ejemplo username-taken */
+  readonly codigo: string
 
-  constructor(status: number, code: string, message: string) {
-    super(message)
-    this.status = status
-    this.code = code
+  /**
+   * @param estatus Código HTTP de la respuesta
+   * @param codigo Código del error que envió el servidor
+   * @param mensaje Mensaje para el jugador
+   * @see RF61
+   */
+  constructor(estatus: number, codigo: string, mensaje: string) {
+    super(mensaje)
+    this.estatus = estatus
+    this.codigo = codigo
   }
 }
 
-/** No hubo respuesta: sin conexión o servidor apagado */
-export class NetworkError extends Error {}
+/**
+ * No hubo respuesta: sin conexión o servidor apagado
+ * @see RF55, RNF11
+ */
+export class ErrorRed extends Error {}
 
-/** `token`: el del dispositivo, para las rutas que modifican o consultan los datos de un jugador */
-export async function apiRequest<T>(method: 'GET' | 'POST', path: string, body?: unknown, token?: string): Promise<T> {
-  const headers: Record<string, string> = {}
-  if (body !== undefined) headers['Content-Type'] = 'application/json'
-  if (token) headers.Authorization = `Bearer ${token}`
-  let response: Response
+/**
+ * Envía una solicitud a la API REST y devuelve el cuerpo de la respuesta.
+ * @param metodo Método HTTP
+ * @param ruta Ruta de la API, por ejemplo /api/players
+ * @param cuerpo Datos que se envían como JSON
+ * @param token Token del dispositivo, para las rutas que modifican o consultan los datos de un
+ *   jugador
+ * @returns Cuerpo JSON de la respuesta
+ * @see RIE01, RF61
+ */
+export async function solicitudApi<TipoDato>(
+  metodo: 'GET' | 'POST',
+  ruta: string,
+  cuerpo?: unknown,
+  token?: string,
+): Promise<TipoDato> {
+  const encabezados: Record<string, string> = {}
+  if (cuerpo !== undefined) {
+    encabezados['Content-Type'] = 'application/json'
+  }
+  if (token) {
+    encabezados.Authorization = `Bearer ${token}`
+  }
+  let respuestaServidor: Response
   try {
-    response = await fetch(API_URL + path, {
-      method,
-      headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+    respuestaServidor = await fetch(URL_API + ruta, {
+      method: metodo,
+      headers: encabezados,
+      body: cuerpo === undefined ? undefined : JSON.stringify(cuerpo),
     })
-  } catch (err) {
-    throw new NetworkError(err instanceof Error ? err.message : 'Sin conexión')
+  } catch (errorCapturado) {
+    throw new ErrorRed(errorCapturado instanceof Error ? errorCapturado.message : 'Sin conexión')
   }
-  const data = await response.json().catch(() => null)
-  if (!response.ok) {
+  const datos = await respuestaServidor.json().catch(() => null)
+  if (!respuestaServidor.ok) {
     // Un proxy sin backend responde 5xx sin el formato de la API: se trata como falta de conexión
-    if (response.status >= 500 && !data?.error) throw new NetworkError(`HTTP ${response.status}`)
-    throw new ApiError(response.status, data?.error ?? 'unknown', data?.message ?? `Error ${response.status}`)
+    if (respuestaServidor.status >= 500 && !datos?.error) {
+      throw new ErrorRed(`HTTP ${respuestaServidor.status}`)
+    }
+    throw new ErrorApi(
+      respuestaServidor.status,
+      datos?.error ?? 'unknown',
+      datos?.mensaje ?? `Error ${respuestaServidor.status}`,
+    )
   }
-  return data as T
+  return datos as TipoDato
 }
